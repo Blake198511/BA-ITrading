@@ -2,7 +2,10 @@ import express from 'express';
 
 const router = express.Router();
 
-// In-memory storage for demo (use real database in production)
+// Load MongoDB URI from environment
+const MONGODB_URI = process.env.MONGODB_URI || '';
+
+// In-memory storage for demo (use MongoDB in production)
 const inMemoryDB = {};
 
 /**
@@ -18,7 +21,10 @@ router.get('/db/read', async (req, res) => {
       return res.json({
         timestamp: new Date().toISOString(),
         data: inMemoryDB,
-        note: 'Using in-memory storage. Set DATABASE_URL for persistent storage.'
+        note: MONGODB_URI 
+          ? 'MongoDB configured. In production, this would query MongoDB.' 
+          : 'Using in-memory storage. Set MONGODB_URI for persistent storage.',
+        dbConfigured: !!MONGODB_URI
       });
     }
 
@@ -27,7 +33,11 @@ router.get('/db/read', async (req, res) => {
       timestamp: new Date().toISOString(),
       key,
       value: value || null,
-      exists: !!value
+      exists: !!value,
+      note: MONGODB_URI 
+        ? 'MongoDB configured. In production, this would query MongoDB.' 
+        : 'Using in-memory storage. Set MONGODB_URI for persistent storage.',
+      dbConfigured: !!MONGODB_URI
     });
   } catch (error) {
     console.error('DB read error:', error);
@@ -60,7 +70,10 @@ router.post('/db/write', async (req, res) => {
       key,
       value,
       success: true,
-      note: 'Using in-memory storage. Set DATABASE_URL for persistent storage.'
+      note: MONGODB_URI 
+        ? 'MongoDB configured. In production, this would write to MongoDB.' 
+        : 'Using in-memory storage. Set MONGODB_URI for persistent storage.',
+      dbConfigured: !!MONGODB_URI
     });
   } catch (error) {
     console.error('DB write error:', error);

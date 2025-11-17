@@ -73,11 +73,21 @@ async function loadConfigStatus() {
         
         statusDiv.innerHTML = '';
         
-        statusDiv.innerHTML += createConfigItem('Evon AI (OpenAI)', data.configuration.ai.openai);
-        statusDiv.innerHTML += createConfigItem('Evon AI (Anthropic)', data.configuration.ai.anthropic);
-        statusDiv.innerHTML += createConfigItem('Trading API', data.configuration.trading.configured);
-        statusDiv.innerHTML += createConfigItem('News Service', data.configuration.services.news);
-        statusDiv.innerHTML += createConfigItem('Reddit Service', data.configuration.services.reddit);
+        // AI Configuration
+        statusDiv.innerHTML += createConfigItem('OpenAI (Evon Brain)', data.configuration.ai.openai);
+        
+        // Voice Configuration
+        statusDiv.innerHTML += createConfigItem('ElevenLabs Voice Key', data.configuration.voice.elevenLabs);
+        statusDiv.innerHTML += createConfigItem('ElevenLabs Voice ID', data.configuration.voice.voiceId);
+        
+        // Database Configuration
+        statusDiv.innerHTML += createConfigItem('MongoDB Database', data.configuration.database.mongodb);
+        
+        // Market Data Configuration
+        statusDiv.innerHTML += createConfigItem('Polygon Market Data', data.configuration.market.polygon);
+        
+        // Services Configuration
+        statusDiv.innerHTML += createConfigItem('News API', data.configuration.services.news);
         
         const ready = data.ready ? 'Evon Ready' : 'Configuration Needed';
         const className = data.ready ? 'configured' : 'not-configured';

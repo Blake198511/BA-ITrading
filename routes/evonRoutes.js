@@ -2,9 +2,8 @@ import express from 'express';
 
 const router = express.Router();
 
-// Load OpenAI/Anthropic API key from environment
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
-const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || '';
+// Load OpenAI API key from environment
+const OPENAI_KEY = process.env.OPENAI_KEY || '';
 
 /**
  * POST /evon
@@ -21,15 +20,15 @@ router.post('/evon', async (req, res) => {
       });
     }
 
-    // Check if AI API keys are configured
-    if (!OPENAI_API_KEY && !ANTHROPIC_API_KEY) {
+    // Check if AI API key is configured
+    if (!OPENAI_KEY) {
       return res.status(503).json({
         error: 'Service Unavailable',
-        message: 'AI API keys not configured. Please set OPENAI_API_KEY or ANTHROPIC_API_KEY in .env file'
+        message: 'AI API key not configured. Please set OPENAI_KEY in .env file'
       });
     }
 
-    // Mock Evon AI response - in production, integrate with OpenAI or Anthropic API
+    // Mock Evon AI response - in production, integrate with OpenAI API
     const response = {
       timestamp: new Date().toISOString(),
       query: prompt || `Analyze ${symbol}`,
@@ -49,10 +48,10 @@ router.post('/evon', async (req, res) => {
         ],
         nextAction: 'Wait for breakout confirmation',
         voiceMessage: 'Based on my analysis, I recommend holding your position and waiting for a clear breakout signal.',
-        aiProvider: OPENAI_API_KEY ? 'OpenAI' : 'Anthropic',
+        aiProvider: 'OpenAI',
         signature: '- Evon AI'
       },
-      note: 'This is a demo response from Evon. In production, this would use the configured AI API.'
+      note: 'This is a demo response from Evon. In production, this would use the configured OpenAI API.'
     };
 
     res.json(response);

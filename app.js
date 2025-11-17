@@ -42,24 +42,29 @@ app.get('/api/health', (req, res) => {
 // Configuration status endpoint
 app.get('/api/config/status', (req, res) => {
   const configStatus = {
-    trading: {
-      configured: !!(process.env.TRADING_API_KEY || process.env.MARKET_DATA_API_KEY),
-      hasApiKey: !!process.env.TRADING_API_KEY,
-      hasMarketData: !!process.env.MARKET_DATA_API_KEY
-    },
     ai: {
-      openai: !!process.env.OPENAI_API_KEY,
-      anthropic: !!process.env.ANTHROPIC_API_KEY,
-      configured: !!(process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY)
+      openai: !!process.env.OPENAI_KEY,
+      configured: !!process.env.OPENAI_KEY
+    },
+    voice: {
+      elevenLabs: !!process.env.ELEVEN_KEY,
+      voiceId: !!process.env.ELEVEN_VOICE_ID,
+      configured: !!(process.env.ELEVEN_KEY && process.env.ELEVEN_VOICE_ID)
+    },
+    database: {
+      mongodb: !!process.env.MONGODB_URI,
+      configured: !!process.env.MONGODB_URI
+    },
+    market: {
+      polygon: !!process.env.POLYGON_KEY,
+      configured: !!process.env.POLYGON_KEY
     },
     services: {
-      news: !!process.env.NEWS_API_KEY,
-      reddit: !!(process.env.REDDIT_CLIENT_ID && process.env.REDDIT_CLIENT_SECRET),
-      database: !!process.env.DATABASE_URL
+      news: !!process.env.NEWS_API_KEY
     }
   };
 
-  const ready = configStatus.ai.configured || configStatus.trading.configured;
+  const ready = configStatus.ai.configured;
 
   res.json({
     status: 'ok',

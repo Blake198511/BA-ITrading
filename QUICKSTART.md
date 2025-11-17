@@ -26,20 +26,20 @@ npm install
 cp .env.example .env
 
 # Edit .env and add your API keys
-# Minimum required: OPENAI_API_KEY or ANTHROPIC_API_KEY
+# Minimum required: OPENAI_KEY
 ```
 
 Example `.env` file:
 ```env
 # Required for Evon AI to work
-OPENAI_API_KEY=sk-your-openai-key-here
+OPENAI_KEY=sk-your-openai-key-here
 
 # Optional but recommended
-TRADING_API_KEY=your_trading_api_key
-MARKET_DATA_API_KEY=your_market_data_key
+ELEVEN_KEY=your_elevenlabs_api_key
+ELEVEN_VOICE_ID=your_voice_id
+MONGODB_URI=your_mongodb_connection_string
+POLYGON_KEY=your_polygon_api_key
 NEWS_API_KEY=your_news_api_key
-REDDIT_CLIENT_ID=your_reddit_client_id
-REDDIT_CLIENT_SECRET=your_reddit_client_secret
 ```
 
 ### Step 3: Start Evon
@@ -97,27 +97,28 @@ docker-compose up -d
 ### Heroku
 ```bash
 heroku create
-heroku config:set OPENAI_API_KEY=your_key
+heroku config:set OPENAI_KEY=your_key
+heroku config:set ELEVEN_KEY=your_key
+heroku config:set MONGODB_URI=your_uri
+heroku config:set POLYGON_KEY=your_key
 git push heroku main
 ```
 
 ## 🔧 Configuration
 
 ### Minimum Configuration (Demo Mode)
-Just add one of these:
-- `OPENAI_API_KEY`
-- `ANTHROPIC_API_KEY`
+Just add:
+- `OPENAI_KEY` - Evon's brain
 
 Evon will work with mock data for other features.
 
 ### Full Configuration (Production)
 Add all API keys in `.env`:
-- AI: OpenAI or Anthropic
-- Trading: Your broker's API
-- Market Data: Real-time quotes
-- News: News aggregation service
-- Reddit: Social sentiment
-- Voice: Text-to-speech (optional)
+- `OPENAI_KEY` - AI intelligence
+- `ELEVEN_KEY` + `ELEVEN_VOICE_ID` - Voice synthesis
+- `MONGODB_URI` - Database storage
+- `POLYGON_KEY` - Real-time market data
+- `NEWS_API_KEY` - News aggregation
 
 ## 🌐 API Endpoints
 

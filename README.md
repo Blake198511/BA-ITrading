@@ -44,17 +44,22 @@
    
    Edit `.env` and add your API keys:
    ```env
-   # Evon AI Configuration
-   OPENAI_API_KEY=your_openai_api_key_here
-   ANTHROPIC_API_KEY=your_anthropic_api_key_here
+   # 1. OPENAI_KEY - Evon's brain
+   OPENAI_KEY=your_openai_api_key_here
    
-   # Trading APIs
-   TRADING_API_KEY=your_trading_api_key_here
-   MARKET_DATA_API_KEY=your_market_data_api_key_here
+   # 2. ELEVEN_KEY - Evon's voice
+   ELEVEN_KEY=your_elevenlabs_api_key_here
    
-   # Social & News
-   REDDIT_CLIENT_ID=your_reddit_client_id_here
-   REDDIT_CLIENT_SECRET=your_reddit_client_secret_here
+   # 3. ELEVEN_VOICE_ID - Voice selection
+   ELEVEN_VOICE_ID=your_voice_id_here
+   
+   # 4. MONGODB_URI - Database
+   MONGODB_URI=your_mongodb_connection_string_here
+   
+   # 5. POLYGON_KEY - Market data
+   POLYGON_KEY=your_polygon_api_key_here
+   
+   # 6. NEWS_API_KEY - News feeds
    NEWS_API_KEY=your_news_api_key_here
    ```
 
@@ -81,18 +86,19 @@ All configuration is done through environment variables in the `.env` file:
 
 ### Required Variables (for full functionality)
 
-- `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` - Powers Evon AI intelligence
-- `TRADING_API_KEY` - Your trading platform API key (optional for demo)
-- `MARKET_DATA_API_KEY` - Market data provider (optional for demo)
+- `OPENAI_KEY` - Powers Evon AI intelligence (chat, reasoning, analysis)
+- `ELEVEN_KEY` - ElevenLabs API for Evon's voice
+- `ELEVEN_VOICE_ID` - Which ElevenLabs voice to use (e.g., Rachel)
+- `MONGODB_URI` - MongoDB database for user data, logs, watchlists
+- `POLYGON_KEY` - Polygon.io API for stock market data
+- `NEWS_API_KEY` - News service for market news feeds
 
 ### Optional Variables
 
 - `PORT` - Server port (default: 3000)
 - `NODE_ENV` - Environment (development/production)
-- `NEWS_API_KEY` - News service API key
-- `REDDIT_CLIENT_ID` + `REDDIT_CLIENT_SECRET` - Reddit API credentials
-- `DATABASE_URL` - Database connection string
-- `ELEVENLABS_API_KEY` - Text-to-speech API for Evon Voice
+- `SESSION_SECRET` - Session encryption secret
+- `JWT_SECRET` - JWT token secret
 
 See `.env.example` for a complete list of available configuration options.
 
