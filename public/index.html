@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evon AI - Professional Trading Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-dark">
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-container">
+            <div class="login-logo">
+                <div class="logo-icon-large">E</div>
+                <h1>Evon AI</h1>
+                <p>Professional Trading Platform</p>
+            </div>
+            <div class="login-form">
+                <h2>Access Required</h2>
+                <p class="login-subtitle">Enter password to continue</p>
+                <input 
+                    type="password" 
+                    id="password-input" 
+                    placeholder="Enter password" 
+                    autocomplete="off"
+                />
+                <button id="login-button" class="login-button">Unlock</button>
+                <div id="login-error" class="login-error" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container" id="app-container" style="display: none;">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="evon-logo">
+                    <div class="logo-icon">E</div>
+                    <div class="logo-text">
+                        <h2>Evon AI</h2>
+                        <p>Pro Trading</p>
+                    </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-section="dashboard">
+                    <span class="icon">📊</span><span>Dashboard</span>
+                </button>
+                <button class="nav-item" data-section="strategy">
+                    <span class="icon">🎯</span><span>Strategy Center</span>
+                </button>
+                <button class="nav-item" data-section="options">
+                    <span class="icon">📈</span><span>Options</span>
+                </button>
+                <button class="nav-item" data-section="penny">
+                    <span class="icon">💰</span><span>Penny Stocks</span>
+                </button>
+                <button class="nav-item" data-section="etf">
+                    <span class="icon">💼</span><span>ETF Analysis</span>
+                </button>
+                <button class="nav-item" data-section="growth">
+                    <span class="icon">🚀</span><span>Growth Stocks</span>
+                </button>
+                <button class="nav-item" data-section="dividend">
+                    <span class="icon">💵</span><span>Dividend Stocks</span>
+                </button>
+                <button class="nav-item" data-section="unusual">
+                    <span class="icon">⚡</span><span>Unusual Activity</span>
+                </button>
+                <button class="nav-item" data-section="sectors">
+                    <span class="icon">🏢</span><span>Sectors</span>
+                </button>
+                <button class="nav-item" data-section="insider">
+                    <span class="icon">👔</span><span>Insider Buying</span>
+                </button>
+                <button class="nav-item" data-section="market">
+                    <span class="icon">📈</span><span>Market Overview</span>
+                </button>
+                <button class="nav-item" data-section="news">
+                    <span class="icon">📰</span><span>News Radar</span>
+                </button>
+                <button class="nav-item" data-section="reddit">
+                    <span class="icon">📣</span><span>Reddit Sentiment</span>
+                </button>
+                <button class="nav-item" data-section="earnings">
+                    <span class="icon">🧮</span><span>Earnings</span>
+                </button>
+                <button class="nav-item" data-section="voice">
+                    <span class="icon">🎤</span><span>Voice Mode</span>
+                </button>
+                <button class="nav-item" data-section="watchlist">
+                    <span class="icon">⭐</span><span>Watchlist</span>
+                </button>
+                <button class="nav-item" data-section="chat">
+                    <span class="icon">💬</span><span>Chat</span>
+                </button>
+                <button class="nav-item" data-section="settings">
+                    <span class="icon">⚙️</span><span>Settings</span>
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <div id="status-indicator" class="status-indicator">
+                    <span class="status-dot ready"></span>
+                    <span class="status-text">Evon Online</span>
+                </div>
+            </div>
+        </aside>
+        <main class="main-content">
+            <!-- 1. Dashboard -->
+            <section id="dashboard-section" class="content-section active">
+                <div class="section-header">
+                    <h1>📊 Dashboard</h1>
+                    <p>Evon AI option plays & stock picks with buy/sell strategies for all timeframes</p>
+                </div>
+                <div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+                    <div class="card">
+                        <h3>⚡ Today</h3>
+                        <div id="day-picks">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>📅 This Week</h3>
+                        <div id="week-picks">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>📆 This Month</h3>
+                        <div id="month-picks">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>🗓️ 3 Months</h3>
+                        <div id="quarter-picks">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>📊 6 Months</h3>
+                        <div id="halfyear-picks">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>📈 1 Year</h3>
+                        <div id="year-picks">Loading...</div>
+                    </div>
+                    <div class="card" style="grid-column: 1 / -1;">
+                        <h3>📰 Top Financial News (MSN, MSNBC, Yahoo Finance)</h3>
+                        <div id="dashboard-news">Loading news...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Strategy Center -->
+            <section id="strategy-section" class="content-section">
+                <div class="section-header">
+                    <h1>🎯 Strategy Center</h1>
+                    <p>AI-powered call and put option plays for stocks and ETFs to maximize profit</p>
+                </div>
+                <div class="card">
+                    <h3>Get Strategy Recommendation</h3>
+                    <form id="strategy-form" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <input type="text" id="strategy-symbol" placeholder="Symbol (e.g., AAPL)" required style="flex: 1; min-width: 200px;">
+                        <select id="strategy-type" style="flex: 1; min-width: 150px;">
+                            <option value="stock">Stock</option>
+                            <option value="etf">ETF</option>
+                        </select>
+                        <button type="submit" class="btn btn-success">Get Strategy</button>
+                    </form>
+                </div>
+                <div id="strategy-result" class="result-box" style="display:none;"></div>
+            </section>
+
+            <!-- 3. Options -->
+            <section id="options-section" class="content-section">
+                <div class="section-header">
+                    <h1>📈 Options</h1>
+                    <p>Call and put strategies for stocks, ETFs, penny stocks, and upcoming plays</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                    <div class="card">
+                        <h3>Popular Stocks</h3>
+                        <div id="popular-options">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>ETF Options</h3>
+                        <div id="etf-options">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>Penny Stock Options</h3>
+                        <div id="penny-options">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>Upcoming Stocks</h3>
+                        <div id="upcoming-options">Loading...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Penny Stocks -->
+            <section id="penny-section" class="content-section">
+                <div class="section-header">
+                    <h1>💰 Penny Stocks</h1>
+                    <p>High-potential penny stocks under $5 and under $1 for great returns</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <div class="card">
+                        <h3>Under $1 - High Returns</h3>
+                        <div id="under1-stocks">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>Under $5 - Great Value</h3>
+                        <div id="under5-stocks">Loading...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. ETF Analysis -->
+            <section id="etf-section" class="content-section">
+                <div class="section-header">
+                    <h1>💼 ETF Analysis</h1>
+                    <p>Call and put recommendations for top ETFs</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <div class="card">
+                        <h3>Call Opportunities</h3>
+                        <div id="etf-calls">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>Put Opportunities</h3>
+                        <div id="etf-puts">Loading...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. Growth Stocks -->
+            <section id="growth-section" class="content-section">
+                <div class="section-header">
+                    <h1>🚀 Growth Stocks</h1>
+                    <p>High-growth potential stocks with strong fundamentals</p>
+                </div>
+                <div id="growth-stocks" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                    Loading...
+                </div>
+            </section>
+
+            <!-- 7. Dividend Stocks -->
+            <section id="dividend-section" class="content-section">
+                <div class="section-header">
+                    <h1>💵 Dividend Stocks</h1>
+                    <p>Reliable income-generating stocks with good fundamentals</p>
+                </div>
+                <div id="dividend-stocks" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                    Loading...
+                </div>
+            </section>
+
+            <!-- 8. Unusual Activity -->
+            <section id="unusual-section" class="content-section">
+                <div class="section-header">
+                    <h1>⚡ Unusual Activity</h1>
+                    <p>Real-time unusual trading activity alerts</p>
+                </div>
+                <button id="refresh-unusual" class="btn btn-primary" style="margin-bottom: 1.5rem;">🔄 Refresh Activity</button>
+                <div id="unusual-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    Loading...
+                </div>
+            </section>
+
+            <!-- 9. Sectors -->
+            <section id="sectors-section" class="content-section">
+                <div class="section-header">
+                    <h1>🏢 Sector Analysis</h1>
+                    <p>Top stocks to buy in each sector with good fundamentals</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                    <div class="card">
+                        <h3>💻 Technology</h3>
+                        <div id="sector-tech">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>🏥 Healthcare</h3>
+                        <div id="sector-health">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>🏦 Finance</h3>
+                        <div id="sector-finance">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>⚡ Energy</h3>
+                        <div id="sector-energy">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>🛒 Consumer</h3>
+                        <div id="sector-consumer">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>🏭 Industrial</h3>
+                        <div id="sector-industrial">Loading...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 10. Insider Buying (Analysts, Politicians, Top Investors) -->
+            <section id="insider-section" class="content-section">
+                <div class="section-header">
+                    <h1>👔 Insider & Analyst Buying</h1>
+                    <p>Stocks that top investors, analysts, politicians, and retail are buying</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div class="card">
+                        <h3>🏆 Top Investors</h3>
+                        <div id="investor-buys">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>📊 Analyst Picks</h3>
+                        <div id="analyst-picks">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>🏛️ Politician Trades</h3>
+                        <div id="politician-trades">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>👥 Retail Favorites</h3>
+                        <div id="retail-favorites">Loading...</div>
+                    </div>
+                </div>
+                <div class="card" style="border: 2px solid var(--rh-green);">
+                    <h3>✨ Evon's Top Picks (Based on All Data)</h3>
+                    <p style="color: var(--rh-gray); margin-bottom: 1rem;">Stocks that Evon AI recommends based on insider buying, analyst ratings, and retail sentiment</p>
+                    <div id="evon-top-picks">Loading...</div>
+                </div>
+            </section>
+
+            <!-- Market Overview -->
+            <section id="market-section" class="content-section">
+                <div class="section-header">
+                    <h1>📈 Market Overview</h1>
+                    <p>Real-time stock quotes, OHLC data, and daily movement (Polygon API)</p>
+                </div>
+                <div class="market-grid">
+                    <div class="quote-card" data-symbol="TSLA">
+                        <h3>TSLA</h3>
+                        <div class="quote-data">Loading...</div>
+                    </div>
+                    <div class="quote-card" data-symbol="NVDA">
+                        <h3>NVDA</h3>
+                        <div class="quote-data">Loading...</div>
+                    </div>
+                    <div class="quote-card" data-symbol="SPY">
+                        <h3>SPY</h3>
+                        <div class="quote-data">Loading...</div>
+                    </div>
+                    <div class="quote-card" data-symbol="QQQ">
+                        <h3>QQQ</h3>
+                        <div class="quote-data">Loading...</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Get Custom Quote</h3>
+                    <form id="quote-form">
+                        <input type="text" id="quote-symbol" placeholder="Enter symbol (e.g., AAPL)" required>
+                        <button type="submit" class="btn btn-primary">Get Quote</button>
+                    </form>
+                </div>
+                <div id="custom-quote-result" style="display:none;"></div>
+            </section>
+
+            <!-- News Radar -->
+            <section id="news-section" class="content-section">
+                <div class="section-header">
+                    <h1>📰 News Radar</h1>
+                    <p>Top finance news from MSN, MSNBC, Yahoo Finance with Evon AI summaries</p>
+                </div>
+                <button id="refresh-news" class="btn btn-primary" style="margin-bottom: 1.5rem;">🔄 Refresh News</button>
+                <div id="news-feed" class="news-feed">Loading...</div>
+            </section>
+
+            <!-- Reddit Sentiment -->
+            <section id="reddit-section" class="content-section">
+                <div class="section-header">
+                    <h1>📣 Reddit Sentiment (Evon Hot Plays)</h1>
+                    <p>WSB trending tickers, short squeeze chatter, penny stock buzz</p>
+                </div>
+                <div class="reddit-controls" style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                    <select id="subreddit-select">
+                        <option value="wallstreetbets">r/wallstreetbets</option>
+                        <option value="stocks">r/stocks</option>
+                        <option value="options">r/options</option>
+                        <option value="pennystocks">r/pennystocks</option>
+                    </select>
+                    <button id="refresh-reddit" class="btn btn-primary">🔄 Analyze Sentiment</button>
+                </div>
+                <div id="reddit-sentiment" class="reddit-grid">
+                    <div class="card">
+                        <h3>Trending Tickers</h3>
+                        <div id="trending-tickers">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>Hype Level (AI Ranked)</h3>
+                        <div id="hype-levels">Loading...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Earnings Calendar -->
+            <section id="earnings-section" class="content-section">
+                <div class="section-header">
+                    <h1>🧮 Earnings Calendar</h1>
+                    <p>Upcoming earnings with AI commentary and volatility expectations</p>
+                </div>
+                <div class="earnings-filter" style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                    <select id="earnings-period">
+                        <option value="this-week">This Week</option>
+                        <option value="next-week">Next Week</option>
+                        <option value="this-month">This Month</option>
+                    </select>
+                    <button id="refresh-earnings" class="btn btn-primary">🔄 Refresh</button>
+                </div>
+                <div id="earnings-list" class="earnings-list">Loading...</div>
+            </section>
+
+            <!-- Voice Mode -->
+            <section id="voice-section" class="content-section">
+                <div class="section-header">
+                    <h1>🎤 Evon Voice Mode</h1>
+                    <p>Speak to Evon and hear responses with voice (ElevenLabs Rachel voice)</p>
+                </div>
+                <div class="voice-container">
+                    <div class="card">
+                        <h3>Voice Settings</h3>
+                        <div class="form-group">
+                            <label>Speed</label>
+                            <input type="range" id="voice-speed" min="0.5" max="2" step="0.1" value="1">
+                            <span id="voice-speed-value">1.0x</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Text for Evon to Speak</label>
+                            <textarea id="voice-text" rows="4" placeholder="Enter text for Evon to speak..."></textarea>
+                        </div>
+                        <button id="speak-btn" class="btn btn-success">🔊 Speak with Evon Voice</button>
+                    </div>
+                    <div id="voice-result" class="result-box" style="display:none;"></div>
+                </div>
+            </section>
+
+            <!-- Watchlist -->
+            <section id="watchlist-section" class="content-section">
+                <div class="section-header">
+                    <h1>⭐ Watchlist</h1>
+                    <p>Save your favorite stocks - Evon monitors changes and alerts you</p>
+                </div>
+                <div class="card">
+                    <h3>Add to Watchlist</h3>
+                    <form id="watchlist-form" style="display: flex; gap: 1rem;">
+                        <input type="text" id="watchlist-symbol" placeholder="Symbol (e.g., AAPL)" required style="flex: 1;">
+                        <button type="submit" class="btn btn-success">+ Add</button>
+                    </form>
+                </div>
+                <div id="watchlist-items" class="watchlist-grid" style="margin-top: 1.5rem;">Loading...</div>
+            </section>
+
+            <!-- Chat (at the end as requested) -->
+            <section id="chat-section" class="content-section">
+                <div class="section-header">
+                    <h1>💬 Evon Chat</h1>
+                    <p>Ask Evon questions about markets, options, crypto, and more</p>
+                </div>
+                <div class="chat-container">
+                    <div id="chat-messages" class="chat-messages">
+                        <div class="message evon-message">
+                            <div class="message-avatar">E</div>
+                            <div class="message-content">
+                                <div class="message-author">Evon AI</div>
+                                <div class="message-text">Hi! I'm Evon, your AI trading assistant. I can help with market breakdowns, option analysis, crypto explanations, and answer any trading questions. What would you like to know?</div>
+                            </div>
+                        </div>
+                    </div>
+                    <form id="chat-form" class="chat-input-container">
+                        <input type="text" id="chat-input" placeholder="Ask Evon anything..." autocomplete="off">
+                        <button type="submit" class="btn-send">Send</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- 2. Evon Voice Mode -->
+            <section id="voice-section" class="content-section">
+                <div class="section-header">
+                    <h1>🎤 Evon Voice Mode</h1>
+                    <p>Speak to Evon and hear responses with voice (ElevenLabs Rachel voice)</p>
+                </div>
+                <div class="voice-container">
+                    <div class="card">
+                        <h3>Voice Settings</h3>
+                        <div class="form-group">
+                            <label>Speed</label>
+                            <input type="range" id="voice-speed" min="0.5" max="2" step="0.1" value="1">
+                            <span id="voice-speed-value">1.0x</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Text for Evon to Speak</label>
+                            <textarea id="voice-text" rows="4" placeholder="Enter text for Evon to speak..."></textarea>
+                        </div>
+                        <button id="speak-btn" class="btn btn-success">🔊 Speak with Evon Voice</button>
+                    </div>
+                    <div id="voice-result" class="result-box" style="display:none;"></div>
+                </div>
+            </section>
+
+            <!-- 3. Market Overview -->
+            <section id="market-section" class="content-section">
+                <div class="section-header">
+                    <h1>📈 Market Overview</h1>
+                    <p>Real-time stock quotes, OHLC data, and daily movement (Polygon API)</p>
+                </div>
+                <div class="market-grid">
+                    <div class="quote-card" data-symbol="TSLA">
+                        <h3>TSLA</h3>
+                        <div class="quote-data">Loading...</div>
+                    </div>
+                    <div class="quote-card" data-symbol="NVDA">
+                        <h3>NVDA</h3>
+                        <div class="quote-data">Loading...</div>
+                    </div>
+                    <div class="quote-card" data-symbol="SPY">
+                        <h3>SPY</h3>
+                        <div class="quote-data">Loading...</div>
+                    </div>
+                    <div class="quote-card" data-symbol="QQQ">
+                        <h3>QQQ</h3>
+                        <div class="quote-data">Loading...</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Get Custom Quote</h3>
+                    <form id="quote-form">
+                        <input type="text" id="quote-symbol" placeholder="Enter symbol (e.g., AAPL)" required>
+                        <button type="submit" class="btn btn-primary">Get Quote</button>
+                    </form>
+                </div>
+                <div id="custom-quote-result" style="display:none;"></div>
+            </section>
+
+            <!-- 4. Option Flow Scanner -->
+            <section id="options-section" class="content-section">
+                <div class="section-header">
+                    <h1>⚡ Option Flow Scanner</h1>
+                    <p>Hot option chains, calls/puts volume, potential breakout plays</p>
+                </div>
+                <button id="refresh-options" class="btn btn-primary">🔄 Refresh Option Flow</button>
+                <div id="options-flow" class="options-grid">
+                    <div class="card">
+                        <h3>High Volume Calls</h3>
+                        <div id="hot-calls">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>High Volume Puts</h3>
+                        <div id="hot-puts">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>Evon Picks</h3>
+                        <div id="evon-picks">Loading...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. News Radar -->
+            <section id="news-section" class="content-section">
+                <div class="section-header">
+                    <h1>📰 News Radar</h1>
+                    <p>Top finance news with Evon AI summaries and sentiment analysis</p>
+                </div>
+                <button id="refresh-news" class="btn btn-primary">🔄 Refresh News</button>
+                <div id="news-feed" class="news-feed">Loading...</div>
+            </section>
+
+            <!-- 6. Reddit Sentiment -->
+            <section id="reddit-section" class="content-section">
+                <div class="section-header">
+                    <h1>📣 Reddit Sentiment (Evon Hot Plays)</h1>
+                    <p>WSB trending tickers, short squeeze chatter, penny stock buzz</p>
+                </div>
+                <div class="reddit-controls">
+                    <select id="subreddit-select">
+                        <option value="wallstreetbets">r/wallstreetbets</option>
+                        <option value="stocks">r/stocks</option>
+                        <option value="options">r/options</option>
+                        <option value="pennystocks">r/pennystocks</option>
+                    </select>
+                    <button id="refresh-reddit" class="btn btn-primary">🔄 Analyze Sentiment</button>
+                </div>
+                <div id="reddit-sentiment" class="reddit-grid">
+                    <div class="card">
+                        <h3>Trending Tickers</h3>
+                        <div id="trending-tickers">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>Hype Level (AI Ranked)</h3>
+                        <div id="hype-levels">Loading...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. Earnings Calendar -->
+            <section id="earnings-section" class="content-section">
+                <div class="section-header">
+                    <h1>🧮 Earnings Calendar</h1>
+                    <p>Upcoming earnings with AI commentary and volatility expectations</p>
+                </div>
+                <div class="earnings-filter">
+                    <select id="earnings-period">
+                        <option value="this-week">This Week</option>
+                        <option value="next-week">Next Week</option>
+                        <option value="this-month">This Month</option>
+                    </select>
+                    <button id="refresh-earnings" class="btn btn-primary">🔄 Refresh</button>
+                </div>
+                <div id="earnings-list" class="earnings-list">Loading...</div>
+            </section>
+
+            <!-- 8. Watchlist -->
+            <section id="watchlist-section" class="content-section">
+                <div class="section-header">
+                    <h1>⭐ Watchlist</h1>
+                    <p>Save your favorite stocks - Evon monitors changes and alerts you</p>
+                </div>
+                <div class="card">
+                    <h3>Add to Watchlist</h3>
+                    <form id="watchlist-form">
+                        <input type="text" id="watchlist-symbol" placeholder="Symbol (e.g., AAPL)" required>
+                        <button type="submit" class="btn btn-success">+ Add</button>
+                    </form>
+                </div>
+                <div id="watchlist-items" class="watchlist-grid">Loading...</div>
+            </section>
+
+            <!-- 9. Settings -->
+            <section id="settings-section" class="content-section">
+                <div class="section-header">
+                    <h1>⚙️ Settings</h1>
+                    <p>Configure API keys, toggle Evon voice, select theme, and manage notifications</p>
+                </div>
+                <div class="settings-grid">
+                    <div class="card">
+                        <h3>🎨 Theme Mode</h3>
+                        <div class="theme-selector">
+                            <button class="theme-btn active" data-theme="dark">🌙 Dark Theme</button>
+                            <button class="theme-btn" data-theme="light">☀️ Light Theme</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>🔑 API Configuration Status</h3>
+                        <div id="config-status">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>➕ Add/Update API Keys</h3>
+                        <form id="api-form">
+                            <select id="api-name">
+                                <option value="OPENAI_KEY">OpenAI (Evon Brain)</option>
+                                <option value="ELEVEN_KEY">ElevenLabs Voice</option>
+                                <option value="ELEVEN_VOICE_ID">ElevenLabs Voice ID</option>
+                                <option value="MONGODB_URI">MongoDB Database</option>
+                                <option value="POLYGON_KEY">Polygon Market Data</option>
+                                <option value="NEWS_API_KEY">News API</option>
+                                <option value="REDDIT_CLIENT_ID">Reddit Client ID</option>
+                                <option value="FINNHUB_API_KEY">Finnhub (Backup)</option>
+                                <option value="ALPHA_VANTAGE_KEY">Alpha Vantage (Backup)</option>
+                            </select>
+                            <input type="password" id="api-value" placeholder="Enter API key">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                        <p class="help-text">Note: API keys are stored server-side in .env file</p>
+                    </div>
+                    <div class="card">
+                        <h3>🔧 Evon Voice Settings</h3>
+                        <label class="toggle">
+                            <input type="checkbox" id="voice-enabled" checked>
+                            <span>Enable Evon Voice Responses</span>
+                        </label>
+                        <label class="toggle">
+                            <input type="checkbox" id="notifications-enabled" checked>
+                            <span>Enable Notifications</span>
+                        </label>
+                    </div>
+                    <div class="card">
+                        <h3>ℹ️ About Evon AI</h3>
+                        <p><strong>Version:</strong> 2.0.0</p>
+                        <p><strong>Mode:</strong> Professional Trading Platform</p>
+                        <p><strong>User:</strong> Blake Mode ON 🎯</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
