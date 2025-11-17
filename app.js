@@ -26,6 +26,55 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Simple session middleware for password protection
+const sessions = new Map();
+
+// Password authentication endpoint
+app.post('/api/auth/login', (req, res) => {
+  const { password } = req.body;
+  const appPassword = process.env.APP_PASSWORD;
+
+  // If no password is set in env, allow access
+  if (!appPassword) {
+    const sessionId = Math.random().toString(36).substring(7);
+    res.json({ success: true, sessionId, message: 'No password required' });
+    return;
+  }
+
+  if (password === appPassword) {
+    const sessionId = Math.random().toString(36).substring(7);
+    sessions.set(sessionId, { authenticated: true, timestamp: Date.now() });
+    res.json({ success: true, sessionId });
+  } else {
+    res.status(401).json({ success: false, message: 'Invalid password' });
+  }
+});
+
+// Password verification endpoint
+app.post('/api/auth/verify', (req, res) => {
+  const { sessionId } = req.body;
+  const appPassword = process.env.APP_PASSWORD;
+
+  // If no password is set in env, allow access
+  if (!appPassword) {
+    res.json({ authenticated: true });
+    return;
+  }
+
+  const session = sessions.get(sessionId);
+  if (session && session.authenticated) {
+    // Session valid for 24 hours
+    if (Date.now() - session.timestamp < 24 * 60 * 60 * 1000) {
+      res.json({ authenticated: true });
+      return;
+    } else {
+      sessions.delete(sessionId);
+    }
+  }
+
+  res.json({ authenticated: false });
+});
+
 // Serve static files from public directory
 app.use(express.static(join(__dirname, 'public')));
 

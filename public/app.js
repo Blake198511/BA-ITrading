@@ -1,10 +1,109 @@
 // Evon AI - Professional Trading Platform
 const API_BASE = window.location.origin;
 
+// Authentication state
+let sessionId = localStorage.getItem('evon_session_id');
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Evon AI Initializing...');
-    initializeApp();
+    checkAuthentication();
 });
+
+async function checkAuthentication() {
+    const loginScreen = document.getElementById('login-screen');
+    const appContainer = document.getElementById('app-container');
+
+    // Check if we have a valid session
+    if (sessionId) {
+        try {
+            const response = await fetch(`${API_BASE}/api/auth/verify`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sessionId })
+            });
+            const data = await response.json();
+
+            if (data.authenticated) {
+                // Valid session - show app
+                loginScreen.style.display = 'none';
+                appContainer.style.display = 'flex';
+                initializeApp();
+                return;
+            }
+        } catch (error) {
+            console.error('Session verification error:', error);
+        }
+    }
+
+    // Show login screen
+    loginScreen.style.display = 'flex';
+    appContainer.style.display = 'none';
+    setupLoginForm();
+}
+
+function setupLoginForm() {
+    const passwordInput = document.getElementById('password-input');
+    const loginButton = document.getElementById('login-button');
+    const loginError = document.getElementById('login-error');
+
+    // Handle Enter key
+    passwordInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            loginButton.click();
+        }
+    });
+
+    loginButton.addEventListener('click', async () => {
+        const password = passwordInput.value;
+        
+        if (!password) {
+            showLoginError('Please enter a password');
+            return;
+        }
+
+        loginButton.disabled = true;
+        loginButton.textContent = 'Verifying...';
+
+        try {
+            const response = await fetch(`${API_BASE}/api/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Store session and show app
+                sessionId = data.sessionId;
+                localStorage.setItem('evon_session_id', sessionId);
+                
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app-container').style.display = 'flex';
+                initializeApp();
+            } else {
+                showLoginError(data.message || 'Invalid password');
+                passwordInput.value = '';
+                passwordInput.focus();
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            showLoginError('Login failed. Please try again.');
+        } finally {
+            loginButton.disabled = false;
+            loginButton.textContent = 'Unlock';
+        }
+    });
+}
+
+function showLoginError(message) {
+    const loginError = document.getElementById('login-error');
+    loginError.textContent = message;
+    loginError.style.display = 'block';
+    setTimeout(() => {
+        loginError.style.display = 'none';
+    }, 3000);
+}
 
 function initializeApp() {
     setupNavigation();

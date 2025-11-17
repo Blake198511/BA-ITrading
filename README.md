@@ -13,6 +13,7 @@
 - ⚙️ **Evon Settings**: Easy configuration and status monitoring
 - 🌐 **Multi-Platform**: Deploy to Vercel, Netlify, Docker, or any Node.js platform
 - 🔐 **Secure**: All API keys loaded from environment variables
+- 🔒 **Password Protected**: Optional single-password protection to keep your platform private
 - 💼 **Modern UI**: Beautiful, responsive web interface with dark mode
 - 🔄 **Real-time**: Live market data and analysis
 
@@ -92,6 +93,13 @@ All configuration is done through environment variables in the `.env` file:
 - `MONGODB_URI` - MongoDB database for user data, logs, watchlists
 - `POLYGON_KEY` - Polygon.io API for stock market data
 - `NEWS_API_KEY` - News service for market news feeds
+
+### Security
+
+- `APP_PASSWORD` - Single password to protect app access (optional but recommended)
+  - If set, users must enter this password to access the platform
+  - Sessions are valid for 24 hours
+  - If not set, app is accessible without authentication
 
 ### Optional Variables
 
