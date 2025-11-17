@@ -21,10 +21,34 @@ const __dirname = dirname(__filename);
 // Create Express app
 const app = express();
 
+// Production environment check
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Request logging middleware
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    const timestamp = new Date().toISOString();
+    const logMessage = `[${timestamp}] ${req.method} ${req.path} ${res.statusCode} ${duration}ms`;
+    
+    if (isProduction) {
+      // In production, only log errors and slow requests
+      if (res.statusCode >= 400 || duration > 1000) {
+        console.log(logMessage);
+      }
+    } else {
+      // In development, log all requests
+      console.log(logMessage);
+    }
+  });
+  next();
+});
+
 // Middleware
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Simple session middleware for password protection
 const sessions = new Map();
@@ -84,7 +108,13 @@ app.get('/api/health', (req, res) => {
     status: 'healthy',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
-    version: '1.0.0'
+    version: '1.0.0',
+    uptime: process.uptime(),
+    memory: {
+      used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+      total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
+      unit: 'MB'
+    }
   });
 });
 
@@ -120,6 +150,63 @@ app.get('/api/config/status', (req, res) => {
     configuration: configStatus,
     ready,
     timestamp: new Date().toISOString()
+  });
+});
+
+// Production readiness check endpoint
+app.get('/api/readiness', (req, res) => {
+  const checks = {
+    environment: {
+      nodeEnv: process.env.NODE_ENV || 'development',
+      isProduction: process.env.NODE_ENV === 'production',
+      status: 'ok'
+    },
+    security: {
+      passwordProtection: !!process.env.APP_PASSWORD,
+      sessionSecret: !!process.env.SESSION_SECRET,
+      jwtSecret: !!process.env.JWT_SECRET,
+      status: process.env.NODE_ENV === 'production' 
+        ? (process.env.APP_PASSWORD ? 'ok' : 'warning')
+        : 'ok',
+      warning: process.env.NODE_ENV === 'production' && !process.env.APP_PASSWORD
+        ? 'APP_PASSWORD not set - app is not password protected'
+        : null
+    },
+    apiKeys: {
+      openai: !!process.env.OPENAI_KEY,
+      elevenLabs: !!process.env.ELEVEN_KEY,
+      mongodb: !!process.env.MONGODB_URI,
+      polygon: !!process.env.POLYGON_KEY,
+      news: !!process.env.NEWS_API_KEY,
+      status: process.env.OPENAI_KEY ? 'ok' : 'error',
+      error: !process.env.OPENAI_KEY ? 'OPENAI_KEY is required for core functionality' : null
+    },
+    system: {
+      uptime: process.uptime(),
+      memory: process.memoryUsage().heapUsed,
+      nodeVersion: process.version,
+      status: 'ok'
+    }
+  };
+
+  const allOk = checks.environment.status === 'ok' &&
+                checks.security.status !== 'error' &&
+                checks.apiKeys.status !== 'error' &&
+                checks.system.status === 'ok';
+
+  const overallStatus = allOk ? 'ready' : 'not_ready';
+  const httpStatus = checks.apiKeys.status === 'error' ? 500 : 200;
+
+  res.status(httpStatus).json({
+    status: overallStatus,
+    timestamp: new Date().toISOString(),
+    checks,
+    recommendations: [
+      !process.env.OPENAI_KEY && 'Add OPENAI_KEY for core AI functionality',
+      process.env.NODE_ENV === 'production' && !process.env.APP_PASSWORD && 'Add APP_PASSWORD for production security',
+      !process.env.SESSION_SECRET && 'Add SESSION_SECRET for secure sessions',
+      !process.env.JWT_SECRET && 'Add JWT_SECRET for secure tokens'
+    ].filter(Boolean)
   });
 });
 
@@ -212,11 +299,31 @@ app.get('*', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(err.status || 500).json({
-    error: err.message || 'Internal Server Error',
-    timestamp: new Date().toISOString()
+  const timestamp = new Date().toISOString();
+  const errorId = Math.random().toString(36).substring(7);
+  
+  // Log error details
+  console.error(`[${timestamp}] Error ${errorId}:`, {
+    message: err.message,
+    stack: isProduction ? undefined : err.stack,
+    path: req.path,
+    method: req.method
   });
+  
+  // Send appropriate error response
+  const statusCode = err.status || 500;
+  const response = {
+    error: isProduction ? 'An error occurred' : err.message,
+    errorId,
+    timestamp
+  };
+  
+  // Include stack trace in development
+  if (!isProduction && err.stack) {
+    response.stack = err.stack;
+  }
+  
+  res.status(statusCode).json(response);
 });
 
 export default app;

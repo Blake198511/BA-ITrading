@@ -1,0 +1,66 @@
+name: Production Readiness Check
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  verify:
+    name: Verify Production Readiness
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Security audit
+      run: npm audit --audit-level=moderate
+      continue-on-error: true
+    
+    - name: Start server
+      run: |
+        npm start &
+        echo $! > server.pid
+        sleep 5
+    
+    - name: Test health endpoint
+      run: |
+        curl -f http://localhost:3000/api/health || exit 1
+    
+    - name: Test config endpoint
+      run: |
+        curl -f http://localhost:3000/api/config/status || exit 1
+    
+    - name: Test readiness endpoint
+      run: |
+        curl http://localhost:3000/api/readiness || echo "Warning: App not fully configured (expected in CI)"
+    
+    - name: Test frontend
+      run: |
+        curl -f http://localhost:3000/ || exit 1
+    
+    - name: Stop server
+      if: always()
+      run: |
+        if [ -f server.pid ]; then
+          kill $(cat server.pid) || true
+          rm server.pid
+        fi
+    
+    - name: Summary
+      run: |
+        echo "✅ Production readiness check completed"
+        echo "- Health endpoint: OK"
+        echo "- Config endpoint: OK"
+        echo "- Frontend: OK"
