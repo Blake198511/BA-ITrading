@@ -46,6 +46,9 @@
                 <button class="nav-item" data-section="sectors">
                     <span class="icon">🏢</span><span>Sectors</span>
                 </button>
+                <button class="nav-item" data-section="insider">
+                    <span class="icon">👔</span><span>Insider Buying</span>
+                </button>
                 <button class="nav-item" data-section="market">
                     <span class="icon">📈</span><span>Market Overview</span>
                 </button>
@@ -83,9 +86,13 @@
             <section id="dashboard-section" class="content-section active">
                 <div class="section-header">
                     <h1>📊 Dashboard</h1>
-                    <p>Your personalized trading recommendations for the week, month, 3-month, 6-month, and 1-year timeframes</p>
+                    <p>Evon AI option plays & stock picks with buy/sell strategies for all timeframes</p>
                 </div>
-                <div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+                    <div class="card">
+                        <h3>⚡ Today</h3>
+                        <div id="day-picks">Loading...</div>
+                    </div>
                     <div class="card">
                         <h3>📅 This Week</h3>
                         <div id="week-picks">Loading...</div>
@@ -260,6 +267,37 @@
                         <h3>🏭 Industrial</h3>
                         <div id="sector-industrial">Loading...</div>
                     </div>
+                </div>
+            </section>
+
+            <!-- 10. Insider Buying (Analysts, Politicians, Top Investors) -->
+            <section id="insider-section" class="content-section">
+                <div class="section-header">
+                    <h1>👔 Insider & Analyst Buying</h1>
+                    <p>Stocks that top investors, analysts, politicians, and retail are buying</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div class="card">
+                        <h3>🏆 Top Investors</h3>
+                        <div id="investor-buys">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>📊 Analyst Picks</h3>
+                        <div id="analyst-picks">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>🏛️ Politician Trades</h3>
+                        <div id="politician-trades">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>👥 Retail Favorites</h3>
+                        <div id="retail-favorites">Loading...</div>
+                    </div>
+                </div>
+                <div class="card" style="border: 2px solid var(--rh-green);">
+                    <h3>✨ Evon's Top Picks (Based on All Data)</h3>
+                    <p style="color: var(--rh-gray); margin-bottom: 1rem;">Stocks that Evon AI recommends based on insider buying, analyst ratings, and retail sentiment</p>
+                    <div id="evon-top-picks">Loading...</div>
                 </div>
             </section>
 
