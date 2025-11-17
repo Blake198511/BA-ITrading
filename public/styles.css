@@ -270,7 +270,7 @@ body {
     background: linear-gradient(135deg, var(--evon-primary), var(--evon-accent));
     display: flex;
     align-items: center;
-    justify-center: center;
+    justify-content: center;
     font-weight: 700;
     color: white;
 }
