@@ -71,6 +71,8 @@
 
 5. **Open your browser**
    Navigate to `http://localhost:3000`
+   
+   **Note:** By default, there is NO password required. The app is publicly accessible. To add password protection, set `APP_PASSWORD` in your `.env` file (see Security section below).
 
    You'll see the Evon AI interface with:
    - **Evon Chat** - Chat with your AI trading assistant
@@ -97,9 +99,10 @@ All configuration is done through environment variables in the `.env` file:
 ### Security
 
 - `APP_PASSWORD` - Single password to protect app access (optional but recommended)
-  - If set, users must enter this password to access the platform
+  - **Default: NO PASSWORD** - The app is publicly accessible without authentication
+  - If you set this variable, users must enter this password to access the platform
   - Sessions are valid for 24 hours
-  - If not set, app is accessible without authentication
+  - If not set or left empty, app is accessible without authentication
 
 ### Optional Variables
 
@@ -285,6 +288,24 @@ POST /api/db/write
 Read and write data to the database.
 
 ## 🔒 Security
+
+### ❓ What's the password to access the app?
+
+**By default, there is NO password.** The app is publicly accessible without authentication.
+
+**To add password protection:**
+1. Edit your `.env` file
+2. Add: `APP_PASSWORD=YourSecurePassword123`
+3. Restart the app
+4. Users will now need to enter this password to access the platform
+
+**Security recommendation for production:**
+- Always set `APP_PASSWORD` for production deployments
+- Use a strong password (12+ characters, mix of letters, numbers, symbols)
+- Use HTTPS to encrypt password transmission
+- Example: `APP_PASSWORD=Evon2024!TradingPlatform$Secure`
+
+### Additional Security Features
 
 - ✅ All API keys stored in environment variables
 - ✅ No sensitive data in source code

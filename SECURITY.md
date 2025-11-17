@@ -2,13 +2,23 @@
 
 ## Password Protection
 
-Your Evon AI trading platform now includes optional password protection to keep it private until you're ready to share it with the world.
+Your Evon AI trading platform includes **optional** password protection to keep it private.
 
-### How It Works
+### 🔓 Default Behavior (NO PASSWORD)
+
+**By default, your app is publicly accessible without any password.**
+
+- If `APP_PASSWORD` is **NOT set** in `.env`, the app runs **without authentication**
+- Anyone who knows your URL can access the platform
+- This is fine for local development and testing
+- **Not recommended for production or public deployments**
+
+### 🔒 How Password Protection Works
 
 1. **Optional Security**: Password protection is completely optional
+   - **Default: NO PASSWORD** - App is publicly accessible
    - If `APP_PASSWORD` is set in `.env`, users must authenticate
-   - If `APP_PASSWORD` is not set, the app runs without authentication
+   - If `APP_PASSWORD` is not set or empty, the app runs without authentication
 
 2. **Simple Login Screen**: When enabled, users see a professional login screen with Evon branding
    - Clean, modern design matching the Robinhood theme

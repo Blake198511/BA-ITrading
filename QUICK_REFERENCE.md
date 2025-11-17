@@ -31,6 +31,8 @@ npm start
 
 ### Optional but Recommended
 - `APP_PASSWORD` - Secure your app
+  - **Default: NO PASSWORD** (app is publicly accessible)
+  - Set this to require password authentication
 - `SESSION_SECRET` - Session security
 - `JWT_SECRET` - Token security
 

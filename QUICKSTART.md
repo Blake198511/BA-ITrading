@@ -49,6 +49,8 @@ npm start
 
 Visit: **http://localhost:3000**
 
+**📌 Important:** By default, there is **NO password** required. The app is publicly accessible without authentication. If you want to add password protection, add `APP_PASSWORD=your_password_here` to your `.env` file.
+
 ## 🎨 Evon AI Features
 
 ### 💬 Evon Chat
