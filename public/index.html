@@ -3,263 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evon AI - Advanced Trading Intelligence</title>
+    <title>Evon AI - Professional Trading Platform</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="theme-dark">
     <div class="app-container">
-        <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="evon-logo">
                     <div class="logo-icon">E</div>
                     <div class="logo-text">
                         <h2>Evon AI</h2>
-                        <p>Trading Intelligence</p>
+                        <p>Pro Trading</p>
                     </div>
                 </div>
             </div>
-            
             <nav class="sidebar-nav">
                 <button class="nav-item active" data-section="chat">
-                    <span class="icon">💬</span>
-                    <span>Evon Chat</span>
+                    <span class="icon">💬</span><span>Evon Chat</span>
                 </button>
                 <button class="nav-item" data-section="voice">
-                    <span class="icon">🎤</span>
-                    <span>Evon Voice</span>
+                    <span class="icon">🎤</span><span>Voice Mode</span>
                 </button>
-                <button class="nav-item" data-section="scanner">
-                    <span class="icon">📊</span>
-                    <span>Market Scanner</span>
+                <button class="nav-item" data-section="market">
+                    <span class="icon">📈</span><span>Market Overview</span>
                 </button>
                 <button class="nav-item" data-section="options">
-                    <span class="icon">📈</span>
-                    <span>Options Flow</span>
-                </button>
-                <button class="nav-item" data-section="reddit">
-                    <span class="icon">💭</span>
-                    <span>Reddit Sentiment</span>
+                    <span class="icon">⚡</span><span>Option Flow</span>
                 </button>
                 <button class="nav-item" data-section="news">
-                    <span class="icon">📰</span>
-                    <span>News Radar</span>
+                    <span class="icon">📰</span><span>News Radar</span>
+                </button>
+                <button class="nav-item" data-section="reddit">
+                    <span class="icon">📣</span><span>Reddit Sentiment</span>
+                </button>
+                <button class="nav-item" data-section="earnings">
+                    <span class="icon">🧮</span><span>Earnings Calendar</span>
+                </button>
+                <button class="nav-item" data-section="watchlist">
+                    <span class="icon">⭐</span><span>Watchlist</span>
                 </button>
                 <button class="nav-item" data-section="settings">
-                    <span class="icon">⚙️</span>
-                    <span>Evon Settings</span>
+                    <span class="icon">⚙️</span><span>Settings</span>
                 </button>
             </nav>
-
             <div class="sidebar-footer">
                 <div id="status-indicator" class="status-indicator">
-                    <span class="status-dot"></span>
-                    <span class="status-text">Initializing...</span>
+                    <span class="status-dot ready"></span>
+                    <span class="status-text">Evon Online</span>
                 </div>
             </div>
         </aside>
-
-        <!-- Main Content -->
         <main class="main-content">
-            <!-- Evon Chat Section -->
+            <!-- 1. Evon Chat -->
             <section id="chat-section" class="content-section active">
                 <div class="section-header">
                     <h1>💬 Evon Chat</h1>
-                    <p>Ask Evon anything about trading, markets, or get AI-powered analysis</p>
+                    <p>Main AI interface - Ask Evon anything about markets, options, crypto, and more</p>
                 </div>
-                
                 <div class="chat-container">
                     <div id="chat-messages" class="chat-messages">
                         <div class="message evon-message">
                             <div class="message-avatar">E</div>
                             <div class="message-content">
                                 <div class="message-author">Evon AI</div>
-                                <div class="message-text">
-                                    Hi! I'm Evon, your AI trading assistant. I can help you with market analysis, 
-                                    trading strategies, and real-time insights. What would you like to know?
-                                </div>
+                                <div class="message-text">Hi! I'm Evon, your AI trading assistant. I can help with market breakdowns, option analysis, crypto explanations, and answer any trading questions. What would you like to know?</div>
                             </div>
                         </div>
                     </div>
-                    
                     <form id="chat-form" class="chat-input-container">
-                        <input 
-                            type="text" 
-                            id="chat-input" 
-                            placeholder="Ask Evon anything..." 
-                            autocomplete="off"
-                        >
+                        <input type="text" id="chat-input" placeholder="Ask Evon anything..." autocomplete="off">
                         <button type="submit" class="btn-send">Send</button>
                     </form>
                 </div>
             </section>
 
-            <!-- Evon Voice Section -->
+            <!-- 2. Evon Voice Mode -->
             <section id="voice-section" class="content-section">
                 <div class="section-header">
-                    <h1>🎤 Evon Voice</h1>
-                    <p>Hear Evon's analysis and trading insights spoken aloud</p>
+                    <h1>🎤 Evon Voice Mode</h1>
+                    <p>Speak to Evon and hear responses with voice (ElevenLabs Rachel voice)</p>
                 </div>
-                
                 <div class="voice-container">
                     <div class="card">
                         <h3>Voice Settings</h3>
                         <div class="form-group">
-                            <label for="voice-speed">Speed</label>
+                            <label>Speed</label>
                             <input type="range" id="voice-speed" min="0.5" max="2" step="0.1" value="1">
                             <span id="voice-speed-value">1.0x</span>
                         </div>
                         <div class="form-group">
-                            <label for="voice-text">Text to Speak</label>
+                            <label>Text for Evon to Speak</label>
                             <textarea id="voice-text" rows="4" placeholder="Enter text for Evon to speak..."></textarea>
                         </div>
-                        <button id="speak-btn" class="btn btn-primary">🔊 Speak with Evon Voice</button>
+                        <button id="speak-btn" class="btn btn-success">🔊 Speak with Evon Voice</button>
                     </div>
-                    
-                    <div id="voice-result" class="result-box" style="display: none;"></div>
+                    <div id="voice-result" class="result-box" style="display:none;"></div>
                 </div>
             </section>
 
-            <!-- Market Scanner Section -->
-            <section id="scanner-section" class="content-section">
+            <!-- 3. Market Overview -->
+            <section id="market-section" class="content-section">
                 <div class="section-header">
-                    <h1>📊 Evon Market Scanner</h1>
-                    <p>Real-time market analysis powered by Evon AI</p>
+                    <h1>📈 Market Overview</h1>
+                    <p>Real-time stock quotes, OHLC data, and daily movement (Polygon API)</p>
                 </div>
-                
-                <div class="scanner-container">
-                    <div class="card">
-                        <form id="scanner-form">
-                            <div class="form-group">
-                                <label for="scanner-symbol">Symbol</label>
-                                <input type="text" id="scanner-symbol" placeholder="e.g., AAPL" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="scanner-timeframe">Timeframe</label>
-                                <select id="scanner-timeframe">
-                                    <option value="1m">1 Minute</option>
-                                    <option value="5m">5 Minutes</option>
-                                    <option value="15m">15 Minutes</option>
-                                    <option value="1h">1 Hour</option>
-                                    <option value="4h">4 Hours</option>
-                                    <option value="1d" selected>1 Day</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Scan Market</button>
-                        </form>
+                <div class="market-grid">
+                    <div class="quote-card" data-symbol="TSLA">
+                        <h3>TSLA</h3>
+                        <div class="quote-data">Loading...</div>
                     </div>
-                    
-                    <div id="scanner-result" class="result-box" style="display: none;"></div>
+                    <div class="quote-card" data-symbol="NVDA">
+                        <h3>NVDA</h3>
+                        <div class="quote-data">Loading...</div>
+                    </div>
+                    <div class="quote-card" data-symbol="SPY">
+                        <h3>SPY</h3>
+                        <div class="quote-data">Loading...</div>
+                    </div>
+                    <div class="quote-card" data-symbol="QQQ">
+                        <h3>QQQ</h3>
+                        <div class="quote-data">Loading...</div>
+                    </div>
                 </div>
+                <div class="card">
+                    <h3>Get Custom Quote</h3>
+                    <form id="quote-form">
+                        <input type="text" id="quote-symbol" placeholder="Enter symbol (e.g., AAPL)" required>
+                        <button type="submit" class="btn btn-primary">Get Quote</button>
+                    </form>
+                </div>
+                <div id="custom-quote-result" style="display:none;"></div>
             </section>
 
-            <!-- Options Flow Section -->
+            <!-- 4. Option Flow Scanner -->
             <section id="options-section" class="content-section">
                 <div class="section-header">
-                    <h1>📈 Evon Options Flow</h1>
-                    <p>Track unusual options activity analyzed by Evon</p>
+                    <h1>⚡ Option Flow Scanner</h1>
+                    <p>Hot option chains, calls/puts volume, potential breakout plays</p>
                 </div>
-                
-                <div class="options-container">
+                <button id="refresh-options" class="btn btn-primary">🔄 Refresh Option Flow</button>
+                <div id="options-flow" class="options-grid">
                     <div class="card">
-                        <h3>Options Flow Monitor</h3>
-                        <button id="refresh-options" class="btn btn-primary">🔄 Refresh Options Flow</button>
+                        <h3>High Volume Calls</h3>
+                        <div id="hot-calls">Loading...</div>
                     </div>
-                    
-                    <div id="options-result" class="result-box">
-                        <h3>Unusual Options Activity</h3>
-                        <p class="text-muted">Click refresh to load latest options flow data from Evon</p>
+                    <div class="card">
+                        <h3>High Volume Puts</h3>
+                        <div id="hot-puts">Loading...</div>
+                    </div>
+                    <div class="card">
+                        <h3>Evon Picks</h3>
+                        <div id="evon-picks">Loading...</div>
                     </div>
                 </div>
             </section>
 
-            <!-- Reddit Sentiment Section -->
-            <section id="reddit-section" class="content-section">
-                <div class="section-header">
-                    <h1>💭 Evon Reddit Sentiment</h1>
-                    <p>Social sentiment analysis from popular trading subreddits</p>
-                </div>
-                
-                <div class="reddit-container">
-                    <div class="card">
-                        <form id="reddit-form">
-                            <div class="form-group">
-                                <label for="reddit-subreddit">Subreddit</label>
-                                <select id="reddit-subreddit">
-                                    <option value="wallstreetbets">r/wallstreetbets</option>
-                                    <option value="stocks">r/stocks</option>
-                                    <option value="investing">r/investing</option>
-                                    <option value="options">r/options</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Analyze Sentiment</button>
-                        </form>
-                    </div>
-                    
-                    <div id="reddit-result" class="result-box" style="display: none;"></div>
-                </div>
-            </section>
-
-            <!-- News Radar Section -->
+            <!-- 5. News Radar -->
             <section id="news-section" class="content-section">
                 <div class="section-header">
-                    <h1>📰 Evon News Radar</h1>
-                    <p>Latest market news curated and analyzed by Evon</p>
+                    <h1>📰 News Radar</h1>
+                    <p>Top finance news with Evon AI summaries and sentiment analysis</p>
                 </div>
-                
-                <div class="news-container">
+                <button id="refresh-news" class="btn btn-primary">🔄 Refresh News</button>
+                <div id="news-feed" class="news-feed">Loading...</div>
+            </section>
+
+            <!-- 6. Reddit Sentiment -->
+            <section id="reddit-section" class="content-section">
+                <div class="section-header">
+                    <h1>📣 Reddit Sentiment (Evon Hot Plays)</h1>
+                    <p>WSB trending tickers, short squeeze chatter, penny stock buzz</p>
+                </div>
+                <div class="reddit-controls">
+                    <select id="subreddit-select">
+                        <option value="wallstreetbets">r/wallstreetbets</option>
+                        <option value="stocks">r/stocks</option>
+                        <option value="options">r/options</option>
+                        <option value="pennystocks">r/pennystocks</option>
+                    </select>
+                    <button id="refresh-reddit" class="btn btn-primary">🔄 Analyze Sentiment</button>
+                </div>
+                <div id="reddit-sentiment" class="reddit-grid">
                     <div class="card">
-                        <form id="news-form">
-                            <div class="form-group">
-                                <label for="news-symbol">Filter by Symbol (optional)</label>
-                                <input type="text" id="news-symbol" placeholder="Leave empty for all news">
-                            </div>
-                            <button type="submit" class="btn btn-primary">Load News</button>
-                        </form>
+                        <h3>Trending Tickers</h3>
+                        <div id="trending-tickers">Loading...</div>
                     </div>
-                    
-                    <div id="news-result" class="result-box" style="display: none;"></div>
+                    <div class="card">
+                        <h3>Hype Level (AI Ranked)</h3>
+                        <div id="hype-levels">Loading...</div>
+                    </div>
                 </div>
             </section>
 
-            <!-- Settings Section -->
+            <!-- 7. Earnings Calendar -->
+            <section id="earnings-section" class="content-section">
+                <div class="section-header">
+                    <h1>🧮 Earnings Calendar</h1>
+                    <p>Upcoming earnings with AI commentary and volatility expectations</p>
+                </div>
+                <div class="earnings-filter">
+                    <select id="earnings-period">
+                        <option value="this-week">This Week</option>
+                        <option value="next-week">Next Week</option>
+                        <option value="this-month">This Month</option>
+                    </select>
+                    <button id="refresh-earnings" class="btn btn-primary">🔄 Refresh</button>
+                </div>
+                <div id="earnings-list" class="earnings-list">Loading...</div>
+            </section>
+
+            <!-- 8. Watchlist -->
+            <section id="watchlist-section" class="content-section">
+                <div class="section-header">
+                    <h1>⭐ Watchlist</h1>
+                    <p>Save your favorite stocks - Evon monitors changes and alerts you</p>
+                </div>
+                <div class="card">
+                    <h3>Add to Watchlist</h3>
+                    <form id="watchlist-form">
+                        <input type="text" id="watchlist-symbol" placeholder="Symbol (e.g., AAPL)" required>
+                        <button type="submit" class="btn btn-success">+ Add</button>
+                    </form>
+                </div>
+                <div id="watchlist-items" class="watchlist-grid">Loading...</div>
+            </section>
+
+            <!-- 9. Settings -->
             <section id="settings-section" class="content-section">
                 <div class="section-header">
-                    <h1>⚙️ Evon Settings</h1>
-                    <p>Configure Evon AI and manage your API connections</p>
+                    <h1>⚙️ Settings</h1>
+                    <p>Configure API keys, toggle Evon voice, select theme, and manage notifications</p>
                 </div>
-                
-                <div class="settings-container">
+                <div class="settings-grid">
                     <div class="card">
-                        <h3>API Configuration Status</h3>
-                        <div id="config-status" class="config-status">
-                            <p>Loading configuration...</p>
+                        <h3>🎨 Theme Mode</h3>
+                        <div class="theme-selector">
+                            <button class="theme-btn active" data-theme="dark">🌙 Dark Theme</button>
+                            <button class="theme-btn" data-theme="light">☀️ Light Theme</button>
                         </div>
                     </div>
-                    
                     <div class="card">
-                        <h3>Setup Instructions</h3>
-                        <ol class="setup-instructions">
-                            <li>Copy <code>.env.example</code> to <code>.env</code></li>
-                            <li>Add your API keys to the <code>.env</code> file</li>
-                            <li>Restart the server to apply changes</li>
-                            <li>Refresh this page to see updated status</li>
-                        </ol>
+                        <h3>🔑 API Configuration Status</h3>
+                        <div id="config-status">Loading...</div>
                     </div>
-                    
                     <div class="card">
-                        <h3>About Evon AI</h3>
-                        <p><strong>Version:</strong> 1.0.0</p>
-                        <p><strong>Status:</strong> <span id="evon-status">Active</span></p>
-                        <p><strong>Description:</strong> Evon is your advanced AI trading assistant, 
-                        combining cutting-edge artificial intelligence with real-time market data to 
-                        provide intelligent trading insights and analysis.</p>
+                        <h3>➕ Add/Update API Keys</h3>
+                        <form id="api-form">
+                            <select id="api-name">
+                                <option value="OPENAI_KEY">OpenAI (Evon Brain)</option>
+                                <option value="ELEVEN_KEY">ElevenLabs Voice</option>
+                                <option value="ELEVEN_VOICE_ID">ElevenLabs Voice ID</option>
+                                <option value="MONGODB_URI">MongoDB Database</option>
+                                <option value="POLYGON_KEY">Polygon Market Data</option>
+                                <option value="NEWS_API_KEY">News API</option>
+                                <option value="REDDIT_CLIENT_ID">Reddit Client ID</option>
+                                <option value="FINNHUB_API_KEY">Finnhub (Backup)</option>
+                                <option value="ALPHA_VANTAGE_KEY">Alpha Vantage (Backup)</option>
+                            </select>
+                            <input type="password" id="api-value" placeholder="Enter API key">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                        <p class="help-text">Note: API keys are stored server-side in .env file</p>
+                    </div>
+                    <div class="card">
+                        <h3>🔧 Evon Voice Settings</h3>
+                        <label class="toggle">
+                            <input type="checkbox" id="voice-enabled" checked>
+                            <span>Enable Evon Voice Responses</span>
+                        </label>
+                        <label class="toggle">
+                            <input type="checkbox" id="notifications-enabled" checked>
+                            <span>Enable Notifications</span>
+                        </label>
+                    </div>
+                    <div class="card">
+                        <h3>ℹ️ About Evon AI</h3>
+                        <p><strong>Version:</strong> 2.0.0</p>
+                        <p><strong>Mode:</strong> Professional Trading Platform</p>
+                        <p><strong>User:</strong> Blake Mode ON 🎯</p>
                     </div>
                 </div>
             </section>
         </main>
     </div>
-
     <script src="app.js"></script>
 </body>
 </html>

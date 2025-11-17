@@ -1,39 +1,23 @@
-// Evon AI Frontend Application
+// Evon AI - Professional Trading Platform
 const API_BASE = window.location.origin;
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Evon AI Initializing...');
+    initializeApp();
+});
+
+function initializeApp() {
+    setupNavigation();
     checkHealth();
     loadConfigStatus();
     setupEventListeners();
-});
+    loadMarketOverview();
+}
 
-function setupEventListeners() {
-    // Navigation
+function setupNavigation() {
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', () => handleNavigation(item));
     });
-
-    // Chat
-    document.getElementById('chat-form')?.addEventListener('submit', handleChatSubmit);
-
-    // Voice
-    document.getElementById('speak-btn')?.addEventListener('click', handleVoiceSpeak);
-    document.getElementById('voice-speed')?.addEventListener('input', (e) => {
-        document.getElementById('voice-speed-value').textContent = e.target.value + 'x';
-    });
-
-    // Scanner
-    document.getElementById('scanner-form')?.addEventListener('submit', handleScannerSubmit);
-
-    // Options
-    document.getElementById('refresh-options')?.addEventListener('click', handleOptionsRefresh);
-
-    // Reddit
-    document.getElementById('reddit-form')?.addEventListener('submit', handleRedditSubmit);
-
-    // News
-    document.getElementById('news-form')?.addEventListener('submit', handleNewsSubmit);
 }
 
 function handleNavigation(navItem) {
@@ -44,6 +28,49 @@ function handleNavigation(navItem) {
     
     document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
     document.getElementById(`${section}-section`)?.classList.add('active');
+    
+    // Load section-specific data
+    if (section === 'market') loadMarketOverview();
+    if (section === 'options') loadOptionsFlow();
+    if (section === 'news') loadNews();
+    if (section === 'reddit') loadRedditSentiment();
+    if (section === 'earnings') loadEarnings();
+    if (section === 'watchlist') loadWatchlist();
+}
+
+function setupEventListeners() {
+    // Chat
+    document.getElementById('chat-form')?.addEventListener('submit', handleChatSubmit);
+    
+    // Voice
+    document.getElementById('speak-btn')?.addEventListener('click', handleVoiceSpeak);
+    document.getElementById('voice-speed')?.addEventListener('input', (e) => {
+        document.getElementById('voice-speed-value').textContent = e.target.value + 'x';
+    });
+    
+    // Market
+    document.getElementById('quote-form')?.addEventListener('submit', handleQuoteSubmit);
+    
+    // Options
+    document.getElementById('refresh-options')?.addEventListener('click', loadOptionsFlow);
+    
+    // News
+    document.getElementById('refresh-news')?.addEventListener('click', loadNews);
+    
+    // Reddit
+    document.getElementById('refresh-reddit')?.addEventListener('click', loadRedditSentiment);
+    
+    // Earnings
+    document.getElementById('refresh-earnings')?.addEventListener('click', loadEarnings);
+    
+    // Watchlist
+    document.getElementById('watchlist-form')?.addEventListener('submit', handleWatchlistAdd);
+    
+    // Settings
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.addEventListener('click', () => handleThemeChange(btn));
+    });
+    document.getElementById('api-form')?.addEventListener('submit', handleAPIKeySubmit);
 }
 
 async function checkHealth() {
@@ -73,36 +100,18 @@ async function loadConfigStatus() {
         
         statusDiv.innerHTML = '';
         
-        // AI Configuration
-        statusDiv.innerHTML += createConfigItem('OpenAI (Evon Brain)', data.configuration.ai.openai);
+        const items = [
+            ['OpenAI (Evon Brain)', data.configuration.ai.openai],
+            ['ElevenLabs Voice', data.configuration.voice.elevenLabs],
+            ['Voice ID', data.configuration.voice.voiceId],
+            ['MongoDB Database', data.configuration.database.mongodb],
+            ['Polygon Market Data', data.configuration.market.polygon],
+            ['News API', data.configuration.services.news]
+        ];
         
-        // Voice Configuration
-        statusDiv.innerHTML += createConfigItem('ElevenLabs Voice Key', data.configuration.voice.elevenLabs);
-        statusDiv.innerHTML += createConfigItem('ElevenLabs Voice ID', data.configuration.voice.voiceId);
-        
-        // Database Configuration
-        statusDiv.innerHTML += createConfigItem('MongoDB Database', data.configuration.database.mongodb);
-        
-        // Market Data Configuration
-        statusDiv.innerHTML += createConfigItem('Polygon Market Data', data.configuration.market.polygon);
-        
-        // Services Configuration
-        statusDiv.innerHTML += createConfigItem('News API', data.configuration.services.news);
-        
-        const ready = data.ready ? 'Evon Ready' : 'Configuration Needed';
-        const className = data.ready ? 'configured' : 'not-configured';
-        statusDiv.innerHTML += `
-            <div class="config-item" style="margin-top: 1rem; padding-top: 1rem; border-top: 2px solid var(--border-color);">
-                <span style="font-weight: 700;">Overall Status</span>
-                <span class="config-badge ${className}">${ready}</span>
-            </div>
-        `;
-        
-        const evonStatus = document.getElementById('evon-status');
-        if (evonStatus) {
-            evonStatus.textContent = data.ready ? 'Active & Ready' : 'Needs Configuration';
-            evonStatus.style.color = data.ready ? 'var(--evon-success)' : 'var(--evon-warning)';
-        }
+        items.forEach(([name, configured]) => {
+            statusDiv.innerHTML += createConfigItem(name, configured);
+        });
     } catch (error) {
         console.error('Config load failed:', error);
     }
@@ -119,6 +128,7 @@ function createConfigItem(name, configured) {
     `;
 }
 
+// Chat Functions
 async function handleChatSubmit(e) {
     e.preventDefault();
     
@@ -195,6 +205,7 @@ function removeTypingIndicator(id) {
     document.getElementById(id)?.remove();
 }
 
+// Voice Functions
 async function handleVoiceSpeak() {
     const text = document.getElementById('voice-text').value;
     const speed = document.getElementById('voice-speed').value;
@@ -223,162 +234,279 @@ async function handleVoiceSpeak() {
             <h3>Evon Voice Response</h3>
             <p><strong>Text:</strong> ${data.text}</p>
             <p><strong>Speed:</strong> ${data.speed}x</p>
-            <p class="text-muted">${data.note}</p>
+            <p><strong>Voice:</strong> ${data.voiceId}</p>
+            <p class="help-text">${data.note}</p>
         `;
     } catch (error) {
         resultDiv.style.display = 'block';
-        resultDiv.innerHTML = `<p style="color: var(--evon-danger);">Error: ${error.message}</p>`;
+        resultDiv.innerHTML = `<p style="color: var(--rh-red);">Error: ${error.message}</p>`;
     } finally {
         btn.disabled = false;
         btn.textContent = '🔊 Speak with Evon Voice';
     }
 }
 
-async function handleScannerSubmit(e) {
+// Market Functions
+async function loadMarketOverview() {
+    const symbols = ['TSLA', 'NVDA', 'SPY', 'QQQ'];
+    
+    for (const symbol of symbols) {
+        try {
+            const response = await fetch(`${API_BASE}/api/market/quote/${symbol}`);
+            const data = await response.json();
+            
+            const card = document.querySelector(`.quote-card[data-symbol="${symbol}"] .quote-data`);
+            if (card) {
+                const changeClass = data.change >= 0 ? 'positive' : 'negative';
+                const changeSign = data.change >= 0 ? '+' : '';
+                card.innerHTML = `
+                    <div class="price">$${data.price.toFixed(2)}</div>
+                    <div class="change ${changeClass}">
+                        ${changeSign}${data.change.toFixed(2)} (${changeSign}${data.changePercent.toFixed(2)}%)
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error(`Error loading ${symbol}:`, error);
+        }
+    }
+}
+
+async function handleQuoteSubmit(e) {
     e.preventDefault();
     
-    const symbol = document.getElementById('scanner-symbol').value.toUpperCase();
-    const timeframe = document.getElementById('scanner-timeframe').value;
-    const resultDiv = document.getElementById('scanner-result');
-    const btn = e.target.querySelector('button');
-    
-    btn.disabled = true;
-    btn.textContent = 'Evon is scanning...';
+    const symbol = document.getElementById('quote-symbol').value.toUpperCase();
+    const resultDiv = document.getElementById('custom-quote-result');
     
     try {
         const response = await fetch(`${API_BASE}/api/market/quote/${symbol}`);
         const data = await response.json();
         
+        const changeClass = data.change >= 0 ? 'positive' : 'negative';
+        const changeSign = data.change >= 0 ? '+' : '';
+        
         resultDiv.style.display = 'block';
-        resultDiv.className = 'result-box success';
         resultDiv.innerHTML = `
-            <h3>Evon Market Scanner - ${data.symbol}</h3>
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin: 1rem 0;">
-                <div>
-                    <p><strong>Price:</strong> $${data.price.toFixed(2)}</p>
-                    <p><strong>Change:</strong> ${data.change.toFixed(2)} (${data.changePercent.toFixed(2)}%)</p>
-                </div>
-                <div>
-                    <p><strong>Volume:</strong> ${data.volume.toLocaleString()}</p>
-                    <p><strong>Timeframe:</strong> ${timeframe}</p>
+            <div class="card">
+                <h3>${data.symbol}</h3>
+                <div class="quote-data">
+                    <div class="price">$${data.price.toFixed(2)}</div>
+                    <div class="change ${changeClass}">
+                        ${changeSign}${data.change.toFixed(2)} (${changeSign}${data.changePercent.toFixed(2)}%)
+                    </div>
+                    <p>Volume: ${data.volume.toLocaleString()}</p>
                 </div>
             </div>
-            <p class="text-muted">${data.note || 'Analyzed by Evon AI'}</p>
         `;
     } catch (error) {
         resultDiv.style.display = 'block';
-        resultDiv.className = 'result-box error';
-        resultDiv.innerHTML = `<h3>Scan Failed</h3><p>${error.message}</p>`;
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'Scan Market';
+        resultDiv.innerHTML = `<p style="color: var(--rh-red);">Error: ${error.message}</p>`;
     }
 }
 
-async function handleOptionsRefresh() {
-    const resultDiv = document.getElementById('options-result');
-    const btn = document.getElementById('refresh-options');
+// Options Flow Functions
+async function loadOptionsFlow() {
+    const hotCalls = document.getElementById('hot-calls');
+    const hotPuts = document.getElementById('hot-puts');
+    const evonPicks = document.getElementById('evon-picks');
     
-    btn.disabled = true;
-    btn.textContent = '🔄 Loading...';
+    // Mock data - in production, this would call a real options flow API
+    const mockCalls = [
+        { symbol: 'TSLA', strike: 250, expiry: '12/15', volume: 15234, oi: 42891 },
+        { symbol: 'NVDA', strike: 500, expiry: '12/15', volume: 12543, oi: 38291 }
+    ];
+    
+    const mockPuts = [
+        { symbol: 'SPY', strike: 450, expiry: '12/15', volume: 9876, oi: 28432 },
+        { symbol: 'QQQ', strike: 380, expiry: '12/15', volume: 8765, oi: 24123 }
+    ];
+    
+    hotCalls.innerHTML = mockCalls.map(opt => `
+        <div style="padding: 0.75rem; background: var(--rh-black); border-radius: 8px; margin-bottom: 0.5rem;">
+            <strong>${opt.symbol}</strong> $${opt.strike} ${opt.expiry}<br>
+            <span style="color: var(--rh-green);">Vol: ${opt.volume.toLocaleString()} | OI: ${opt.oi.toLocaleString()}</span>
+        </div>
+    `).join('');
+    
+    hotPuts.innerHTML = mockPuts.map(opt => `
+        <div style="padding: 0.75rem; background: var(--rh-black); border-radius: 8px; margin-bottom: 0.5rem;">
+            <strong>${opt.symbol}</strong> $${opt.strike} ${opt.expiry}<br>
+            <span style="color: var(--rh-red);">Vol: ${opt.volume.toLocaleString()} | OI: ${opt.oi.toLocaleString()}</span>
+        </div>
+    `).join('');
+    
+    evonPicks.innerHTML = `
+        <div style="padding: 0.75rem; background: var(--rh-black); border-radius: 8px; margin-bottom: 0.5rem;">
+            <strong style="color: var(--rh-green);">CALL: AAPL $180</strong> 12/22<br>
+            <span style="color: var(--rh-gray);">Evon confidence: High</span>
+        </div>
+        <div style="padding: 0.75rem; background: var(--rh-black); border-radius: 8px; margin-bottom: 0.5rem;">
+            <strong style="color: var(--rh-red);">PUT: TSLA $240</strong> 12/22<br>
+            <span style="color: var(--rh-gray);">Evon confidence: Medium</span>
+        </div>
+    `;
+}
+
+// News Functions
+async function loadNews() {
+    const newsFeed = document.getElementById('news-feed');
     
     try {
-        resultDiv.innerHTML = `
-            <h3>Unusual Options Activity (Evon Analysis)</h3>
-            <div style="margin-top: 1rem;">
-                <div class="card" style="background: var(--bg-dark); margin-bottom: 1rem;">
-                    <p><strong>AAPL</strong> - Calls @ $180 Strike</p>
-                    <p>Volume: 15,234 | Open Interest: 42,891</p>
-                    <p style="color: var(--evon-success);">Bullish Signal</p>
-                </div>
-                <div class="card" style="background: var(--bg-dark); margin-bottom: 1rem;">
-                    <p><strong>TSLA</strong> - Puts @ $240 Strike</p>
-                    <p>Volume: 9,876 | Open Interest: 28,432</p>
-                    <p style="color: var(--evon-danger);">Bearish Signal</p>
-                </div>
-                <p class="text-muted">Configure options data API for real-time flow analysis</p>
+        const response = await fetch(`${API_BASE}/api/news/latest`);
+        const data = await response.json();
+        
+        newsFeed.innerHTML = data.news.map(article => `
+            <div class="news-item">
+                <h4>${article.title}</h4>
+                <div class="meta">${article.source} - ${new Date(article.publishedAt).toLocaleString()}</div>
+                <span class="sentiment ${article.sentiment}">${article.sentiment.toUpperCase()}</span>
+                <p style="margin-top: 0.75rem; color: var(--rh-gray);">
+                    Evon AI: ${article.sentiment === 'bullish' ? 'Positive market impact expected' : article.sentiment === 'bearish' ? 'Caution advised' : 'Neutral impact'}
+                </p>
             </div>
-        `;
-    } finally {
-        btn.disabled = false;
-        btn.textContent = '🔄 Refresh Options Flow';
+        `).join('');
+    } catch (error) {
+        newsFeed.innerHTML = `<p style="color: var(--rh-red);">Error loading news: ${error.message}</p>`;
     }
 }
 
-async function handleRedditSubmit(e) {
-    e.preventDefault();
-    
-    const subreddit = document.getElementById('reddit-subreddit').value;
-    const resultDiv = document.getElementById('reddit-result');
-    const btn = e.target.querySelector('button');
-    
-    btn.disabled = true;
-    btn.textContent = 'Evon is analyzing...';
+// Reddit Sentiment Functions
+async function loadRedditSentiment() {
+    const subreddit = document.getElementById('subreddit-select').value;
+    const trendingDiv = document.getElementById('trending-tickers');
+    const hypeDiv = document.getElementById('hype-levels');
     
     try {
         const response = await fetch(`${API_BASE}/api/reddit/sentiment/${subreddit}`);
         const data = await response.json();
         
-        resultDiv.style.display = 'block';
-        resultDiv.className = 'result-box success';
-        resultDiv.innerHTML = `
-            <h3>Evon Reddit Sentiment - r/${data.subreddit}</h3>
-            <div style="margin: 1rem 0;">
-                <p><strong>Overall:</strong> <span style="color: var(--evon-success);">${data.sentiment.overall.toUpperCase()}</span></p>
-                <p><strong>Score:</strong> ${(data.sentiment.score * 100).toFixed(0)}%</p>
+        trendingDiv.innerHTML = data.topMentions.map(mention => `
+            <div style="padding: 0.75rem; background: var(--rh-black); border-radius: 8px; margin-bottom: 0.5rem;">
+                <strong>${mention.symbol}</strong><br>
+                <span style="color: var(--rh-yellow);">${mention.mentions} mentions</span>
             </div>
-            <h4>Top Mentions:</h4>
-            ${data.topMentions.map(mention => `
-                <div class="card" style="background: var(--bg-dark); margin-top: 0.5rem;">
-                    <p><strong>${mention.symbol}</strong> - ${mention.mentions} mentions</p>
-                </div>
-            `).join('')}
-            <p class="text-muted" style="margin-top: 1rem;">${data.note || 'Analyzed by Evon AI'}</p>
+        `).join('');
+        
+        hypeDiv.innerHTML = `
+            <div style="padding: 0.75rem; background: var(--rh-black); border-radius: 8px; margin-bottom: 0.5rem;">
+                <strong>Overall Sentiment:</strong> <span style="color: var(--rh-green);">${data.sentiment.overall.toUpperCase()}</span><br>
+                <span style="color: var(--rh-gray);">Evon Hype Score: ${(data.sentiment.score * 100).toFixed(0)}%</span>
+            </div>
         `;
     } catch (error) {
-        resultDiv.style.display = 'block';
-        resultDiv.className = 'result-box error';
-        resultDiv.innerHTML = `<h3>Analysis Failed</h3><p>${error.message}</p>`;
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'Analyze Sentiment';
+        trendingDiv.innerHTML = `<p style="color: var(--rh-red);">Error: ${error.message}</p>`;
     }
 }
 
-async function handleNewsSubmit(e) {
-    e.preventDefault();
+// Earnings Functions
+async function loadEarnings() {
+    const earningsList = document.getElementById('earnings-list');
     
-    const symbol = document.getElementById('news-symbol').value;
-    const resultDiv = document.getElementById('news-result');
-    const btn = e.target.querySelector('button');
+    // Mock data - in production, would call earnings calendar API
+    const mockEarnings = [
+        { symbol: 'AAPL', date: '2024-01-25', estimate: '$2.10 EPS', evonNote: 'Strong quarter expected, monitor iPhone sales' },
+        { symbol: 'MSFT', date: '2024-01-30', estimate: '$2.75 EPS', evonNote: 'Cloud growth key metric to watch' },
+        { symbol: 'GOOGL', date: '2024-02-01', estimate: '$1.50 EPS', evonNote: 'Ad revenue may surprise to upside' }
+    ];
     
-    btn.disabled = true;
-    btn.textContent = 'Evon is loading news...';
+    earningsList.innerHTML = mockEarnings.map(earnings => `
+        <div class="earnings-item">
+            <h4>${earnings.symbol}</h4>
+            <p class="date">${earnings.date}</p>
+            <p>Estimate: ${earnings.estimate}</p>
+            <p style="color: var(--rh-gray); margin-top: 0.5rem;">
+                <strong>Evon AI:</strong> ${earnings.evonNote}
+            </p>
+        </div>
+    `).join('');
+}
+
+// Watchlist Functions
+async function loadWatchlist() {
+    const watchlistDiv = document.getElementById('watchlist-items');
     
     try {
-        const response = await fetch(`${API_BASE}/api/news/latest?symbol=${symbol}`);
+        const response = await fetch(`${API_BASE}/api/db/read?key=watchlist`);
         const data = await response.json();
         
-        resultDiv.style.display = 'block';
-        resultDiv.className = 'result-box success';
-        resultDiv.innerHTML = `
-            <h3>Evon News Radar ${symbol ? `- ${symbol}` : ''}</h3>
-            ${data.news.map(article => `
-                <div class="card" style="background: var(--bg-dark); margin-top: 1rem;">
-                    <h4 style="color: var(--text-primary); margin-bottom: 0.5rem;">${article.title}</h4>
-                    <p class="text-muted">${article.source} - ${new Date(article.publishedAt).toLocaleString()}</p>
-                </div>
-            `).join('')}
-            <p class="text-muted" style="margin-top: 1rem;">${data.note || 'Curated by Evon AI'}</p>
-        `;
+        const watchlist = data.value || [];
+        
+        if (watchlist.length === 0) {
+            watchlistDiv.innerHTML = '<p style="color: var(--rh-gray);">No symbols in watchlist. Add some above!</p>';
+            return;
+        }
+        
+        watchlistDiv.innerHTML = watchlist.map(symbol => `
+            <div class="card">
+                <h4>${symbol}</h4>
+                <p style="color: var(--rh-gray);">Monitored by Evon</p>
+            </div>
+        `).join('');
     } catch (error) {
-        resultDiv.style.display = 'block';
-        resultDiv.className = 'result-box error';
-        resultDiv.innerHTML = `<h3>News Load Failed</h3><p>${error.message}</p>`;
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'Load News';
+        watchlistDiv.innerHTML = `<p style="color: var(--rh-red);">Error: ${error.message}</p>`;
     }
 }
 
-console.log('✅ Evon AI Loaded');
+async function handleWatchlistAdd(e) {
+    e.preventDefault();
+    
+    const symbol = document.getElementById('watchlist-symbol').value.toUpperCase();
+    
+    try {
+        // Get current watchlist
+        const readResponse = await fetch(`${API_BASE}/api/db/read?key=watchlist`);
+        const readData = await readResponse.json();
+        const watchlist = readData.value || [];
+        
+        if (watchlist.includes(symbol)) {
+            alert(`${symbol} is already in your watchlist!`);
+            return;
+        }
+        
+        watchlist.push(symbol);
+        
+        // Save updated watchlist
+        await fetch(`${API_BASE}/api/db/write`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key: 'watchlist', value: watchlist })
+        });
+        
+        document.getElementById('watchlist-symbol').value = '';
+        loadWatchlist();
+    } catch (error) {
+        alert(`Error adding to watchlist: ${error.message}`);
+    }
+}
+
+// Settings Functions
+function handleThemeChange(btn) {
+    const theme = btn.dataset.theme;
+    
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    document.body.className = `theme-${theme}`;
+    
+    // In production, save theme preference to database
+    console.log('Theme changed to:', theme);
+}
+
+async function handleAPIKeySubmit(e) {
+    e.preventDefault();
+    
+    const apiName = document.getElementById('api-name').value;
+    const apiValue = document.getElementById('api-value').value;
+    
+    if (!apiValue) {
+        alert('Please enter an API key');
+        return;
+    }
+    
+    // In production, this would securely save to server-side .env
+    alert(`API key for ${apiName} would be saved securely on the server.\n\nNote: Restart the server after adding keys to .env file.`);
+    
+    document.getElementById('api-value').value = '';
+}
+
+console.log('✅ Evon AI Loaded - Ready for Trading!');
