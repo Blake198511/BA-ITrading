@@ -14,6 +14,7 @@ const server = app.listen(PORT, HOST, () => {
   console.log('  Health & Config:');
   console.log('    GET  /api/health');
   console.log('    GET  /api/config/status');
+  console.log('    GET  /api/readiness');
   console.log('');
   console.log('  AI & Trading:');
   console.log('    POST /api/evon');

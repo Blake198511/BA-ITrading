@@ -176,6 +176,26 @@ git push heroku main
 4. Add environment variables
 5. Deploy
 
+### Verify Your Deployment
+
+After deploying, verify everything is working:
+
+```bash
+# Make the script executable (first time only)
+chmod +x verify-deployment.sh
+
+# Test local deployment
+./verify-deployment.sh http://localhost:3000
+
+# Test production deployment
+./verify-deployment.sh https://your-app.vercel.app
+```
+
+Or check manually:
+- Visit `https://your-app.com/api/health` - Should return healthy status
+- Visit `https://your-app.com/api/readiness` - Check production readiness
+- Visit `https://your-app.com` - Should load the Evon AI interface
+
 ## 🛠️ Development
 
 ```bash
@@ -190,6 +210,9 @@ npm run build
 
 # Run tests
 npm test
+
+# Verify deployment
+./verify-deployment.sh
 ```
 
 ## 📚 API Documentation
@@ -198,13 +221,19 @@ npm test
 ```
 GET /api/health
 ```
-Returns Evon system health status.
+Returns Evon system health status with uptime and memory usage.
 
 ### Configuration Status
 ```
 GET /api/config/status
 ```
 Returns configuration status for all Evon services.
+
+### Production Readiness
+```
+GET /api/readiness
+```
+Returns comprehensive production readiness check including environment, security, API keys, and system status. Use this before deploying to production.
 
 ### Evon AI Chat
 ```
