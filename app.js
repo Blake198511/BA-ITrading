@@ -54,49 +54,18 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 const sessions = new Map();
 
 // Password authentication endpoint
+// Modified to disable password checks and allow access without a password.
 app.post('/api/auth/login', (req, res) => {
-  const { password } = req.body;
-  const appPassword = process.env.APP_PASSWORD;
-
-  // If no password is set in env, allow access
-  if (!appPassword) {
-    const sessionId = Math.random().toString(36).substring(7);
-    res.json({ success: true, sessionId, message: 'No password required' });
-    return;
-  }
-
-  if (password === appPassword) {
-    const sessionId = Math.random().toString(36).substring(7);
-    sessions.set(sessionId, { authenticated: true, timestamp: Date.now() });
-    res.json({ success: true, sessionId });
-  } else {
-    res.status(401).json({ success: false, message: 'Invalid password' });
-  }
+  // Always allow access (password protection disabled)
+  const sessionId = Math.random().toString(36).substring(7);
+  sessions.set(sessionId, { authenticated: true, timestamp: Date.now() });
+  res.json({ success: true, sessionId, message: 'Authentication disabled - no password required' });
 });
 
 // Password verification endpoint
+// Modified to always return authenticated: true
 app.post('/api/auth/verify', (req, res) => {
-  const { sessionId } = req.body;
-  const appPassword = process.env.APP_PASSWORD;
-
-  // If no password is set in env, allow access
-  if (!appPassword) {
-    res.json({ authenticated: true });
-    return;
-  }
-
-  const session = sessions.get(sessionId);
-  if (session && session.authenticated) {
-    // Session valid for 24 hours
-    if (Date.now() - session.timestamp < 24 * 60 * 60 * 1000) {
-      res.json({ authenticated: true });
-      return;
-    } else {
-      sessions.delete(sessionId);
-    }
-  }
-
-  res.json({ authenticated: false });
+  res.json({ authenticated: true });
 });
 
 // Serve static files from public directory
