@@ -1,16 +1,20 @@
-# 🚀 BA-ITrading
+# 🚀 Evon AI Trading Platform
 
-**Quick Pick A.I Trading System** - A fully integrated AI-powered trading application ready to deploy to any platform or browser.
+**Advanced Trading Intelligence System** - A fully integrated AI-powered trading platform ready to deploy to any platform or browser. Just load your API keys from the `.env` file!
 
 ## ✨ Features
 
-- 🤖 **AI-Powered Analysis**: Intelligent trading recommendations using AI
-- ⚡ **Quick Pick System**: Get instant trading suggestions
-- 📊 **Market Analysis**: Comprehensive technical and sentiment analysis
+- 🤖 **Evon AI Chat**: Intelligent trading assistant powered by OpenAI/Anthropic
+- 🎤 **Evon Voice**: Text-to-speech responses for hands-free trading
+- 📊 **Evon Market Scanner**: Real-time market analysis and quotes
+- 📈 **Evon Options Flow**: Track unusual options activity
+- 💭 **Evon Reddit Sentiment**: Social sentiment analysis from trading subreddits
+- 📰 **Evon News Radar**: Latest market news curated by AI
+- ⚙️ **Evon Settings**: Easy configuration and status monitoring
 - 🌐 **Multi-Platform**: Deploy to Vercel, Netlify, Docker, or any Node.js platform
-- 🔐 **Secure Configuration**: All API keys loaded from environment variables
-- 💼 **Modern UI**: Beautiful, responsive web interface
-- 🔄 **Real-time Updates**: Live market data and analysis
+- 🔐 **Secure**: All API keys loaded from environment variables
+- 💼 **Modern UI**: Beautiful, responsive web interface with dark mode
+- 🔄 **Real-time**: Live market data and analysis
 
 ## 🚀 Quick Start
 
@@ -40,10 +44,18 @@
    
    Edit `.env` and add your API keys:
    ```env
-   TRADING_API_KEY=your_trading_api_key_here
-   TRADING_API_SECRET=your_trading_api_secret_here
+   # Evon AI Configuration
    OPENAI_API_KEY=your_openai_api_key_here
-   # ... add other keys as needed
+   ANTHROPIC_API_KEY=your_anthropic_api_key_here
+   
+   # Trading APIs
+   TRADING_API_KEY=your_trading_api_key_here
+   MARKET_DATA_API_KEY=your_market_data_api_key_here
+   
+   # Social & News
+   REDDIT_CLIENT_ID=your_reddit_client_id_here
+   REDDIT_CLIENT_SECRET=your_reddit_client_secret_here
+   NEWS_API_KEY=your_news_api_key_here
    ```
 
 4. **Start the application**
@@ -54,23 +66,33 @@
 5. **Open your browser**
    Navigate to `http://localhost:3000`
 
+   You'll see the Evon AI interface with:
+   - **Evon Chat** - Chat with your AI trading assistant
+   - **Evon Voice** - Hear Evon speak analysis aloud
+   - **Market Scanner** - Real-time market data
+   - **Options Flow** - Unusual options activity
+   - **Reddit Sentiment** - Social trading sentiment
+   - **News Radar** - Latest market news
+   - **Settings** - Configuration and status
+
 ## 🔧 Configuration
 
 All configuration is done through environment variables in the `.env` file:
 
 ### Required Variables (for full functionality)
 
-- `TRADING_API_KEY` - Your trading platform API key
-- `TRADING_API_SECRET` - Your trading platform API secret
-- `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` - AI service API key
+- `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` - Powers Evon AI intelligence
+- `TRADING_API_KEY` - Your trading platform API key (optional for demo)
+- `MARKET_DATA_API_KEY` - Market data provider (optional for demo)
 
 ### Optional Variables
 
 - `PORT` - Server port (default: 3000)
 - `NODE_ENV` - Environment (development/production)
-- `MARKET_DATA_API_KEY` - Market data provider API key
 - `NEWS_API_KEY` - News service API key
-- `DATABASE_URL` - Database connection string (if needed)
+- `REDDIT_CLIENT_ID` + `REDDIT_CLIENT_SECRET` - Reddit API credentials
+- `DATABASE_URL` - Database connection string
+- `ELEVENLABS_API_KEY` - Text-to-speech API for Evon Voice
 
 See `.env.example` for a complete list of available configuration options.
 
@@ -162,37 +184,62 @@ npm test
 ```
 GET /api/health
 ```
-Returns server health status.
+Returns Evon system health status.
 
 ### Configuration Status
 ```
 GET /api/config/status
 ```
-Returns configuration status for all services.
+Returns configuration status for all Evon services.
 
-### Trading Analysis
+### Evon AI Chat
 ```
-POST /api/trading/analyze
+POST /api/evon
 Content-Type: application/json
 
 {
-  "symbol": "AAPL",
-  "timeframe": "1d"
+  "prompt": "Analyze AAPL stock",
+  "symbol": "AAPL"
 }
 ```
-Returns AI-powered trading analysis for the specified symbol.
+Chat with Evon AI for trading insights and analysis.
 
-### Quick Pick
+### Evon Voice
 ```
-POST /api/trading/quick-pick
+POST /api/voice/speak
 Content-Type: application/json
 
 {
-  "market": "stocks",
-  "riskLevel": "medium"
+  "text": "Hello, I'm Evon",
+  "speed": 1.0
 }
 ```
-Returns AI-suggested trading picks based on market and risk level.
+Generate Evon voice responses.
+
+### Market Scanner
+```
+GET /api/market/quote/:symbol
+```
+Get real-time market quotes analyzed by Evon.
+
+### Reddit Sentiment
+```
+GET /api/reddit/sentiment/:subreddit
+```
+Analyze social sentiment from trading subreddits.
+
+### News Radar
+```
+GET /api/news/latest?symbol=AAPL
+```
+Get latest market news curated by Evon.
+
+### Database
+```
+GET  /api/db/read?key=mykey
+POST /api/db/write
+```
+Read and write data to the database.
 
 ## 🔒 Security
 
@@ -223,7 +270,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## ⚠️ Disclaimer
 
-This software is for educational purposes only. It is not financial advice. Use at your own risk. Always do your own research before making any trading decisions.
+This software is for educational purposes only. Evon AI provides analysis and insights but is not financial advice. Use at your own risk. Always do your own research before making any trading decisions.
 
 ## 📧 Support
 
@@ -231,4 +278,4 @@ For issues and questions, please open an issue on GitHub.
 
 ---
 
-**Made with ❤️ for traders and developers** 
+**Evon AI - Advanced Trading Intelligence** | Made with ❤️ for traders and developers 
