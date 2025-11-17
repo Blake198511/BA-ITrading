@@ -11,7 +11,7 @@ function initializeApp() {
     checkHealth();
     loadConfigStatus();
     setupEventListeners();
-    loadMarketOverview();
+    loadDashboard();
 }
 
 function setupNavigation() {
@@ -30,8 +30,16 @@ function handleNavigation(navItem) {
     document.getElementById(`${section}-section`)?.classList.add('active');
     
     // Load section-specific data
+    if (section === 'dashboard') loadDashboard();
+    if (section === 'strategy') loadStrategy();
+    if (section === 'options') loadOptions();
+    if (section === 'penny') loadPennyStocks();
+    if (section === 'etf') loadETFAnalysis();
+    if (section === 'growth') loadGrowthStocks();
+    if (section === 'dividend') loadDividendStocks();
+    if (section === 'unusual') loadUnusualActivity();
+    if (section === 'sectors') loadSectors();
     if (section === 'market') loadMarketOverview();
-    if (section === 'options') loadOptionsFlow();
     if (section === 'news') loadNews();
     if (section === 'reddit') loadRedditSentiment();
     if (section === 'earnings') loadEarnings();
@@ -48,11 +56,14 @@ function setupEventListeners() {
         document.getElementById('voice-speed-value').textContent = e.target.value + 'x';
     });
     
+    // Strategy
+    document.getElementById('strategy-form')?.addEventListener('submit', handleStrategySubmit);
+    
     // Market
     document.getElementById('quote-form')?.addEventListener('submit', handleQuoteSubmit);
     
-    // Options
-    document.getElementById('refresh-options')?.addEventListener('click', loadOptionsFlow);
+    // Unusual Activity
+    document.getElementById('refresh-unusual')?.addEventListener('click', loadUnusualActivity);
     
     // News
     document.getElementById('refresh-news')?.addEventListener('click', loadNews);
@@ -244,6 +255,413 @@ async function handleVoiceSpeak() {
         btn.disabled = false;
         btn.textContent = '🔊 Speak with Evon Voice';
     }
+}
+
+// Dashboard Functions
+async function loadDashboard() {
+    loadDashboardPicks('week', 'week-picks');
+    loadDashboardPicks('month', 'month-picks');
+    loadDashboardPicks('quarter', 'quarter-picks');
+    loadDashboardPicks('halfyear', 'halfyear-picks');
+    loadDashboardPicks('year', 'year-picks');
+    loadDashboardNews();
+}
+
+async function loadDashboardPicks(timeframe, elementId) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    // Mock data - in production, would use Evon AI to generate recommendations
+    const picks = {
+        week: [
+            { type: 'STOCK', symbol: 'NVDA', action: 'BUY', entry: '$495', exit: '$520', reason: 'AI momentum' },
+            { type: 'OPTION', symbol: 'TSLA $250 Call', action: 'BUY', entry: '$8.50', exit: '$12', reason: 'Breakout play' }
+        ],
+        month: [
+            { type: 'ETF', symbol: 'QQQ', action: 'BUY', entry: '$385', exit: '$400', reason: 'Tech rally' },
+            { type: 'STOCK', symbol: 'AAPL', action: 'BUY', entry: '$175', exit: '$190', reason: 'iPhone sales' }
+        ],
+        quarter: [
+            { type: 'STOCK', symbol: 'MSFT', action: 'BUY', entry: '$370', exit: '$410', reason: 'Cloud growth' },
+            { type: 'ETF', symbol: 'SPY', action: 'BUY', entry: '$450', exit: '$475', reason: 'Market rally' }
+        ],
+        halfyear: [
+            { type: 'STOCK', symbol: 'GOOGL', action: 'BUY', entry: '$140', exit: '$165', reason: 'AI integration' },
+            { type: 'STOCK', symbol: 'AMD', action: 'BUY', entry: '$140', exit: '$175', reason: 'Chip demand' }
+        ],
+        year: [
+            { type: 'STOCK', symbol: 'META', action: 'BUY', entry: '$350', exit: '$450', reason: 'Metaverse growth' },
+            { type: 'DIVIDEND', symbol: 'JNJ', action: 'BUY', entry: '$155', exit: '$170', reason: 'Stable income' }
+        ]
+    };
+    
+    const data = picks[timeframe] || [];
+    element.innerHTML = data.map(pick => `
+        <div style="padding: 0.75rem; background: var(--rh-black); border-radius: 8px; margin-bottom: 0.5rem; border-left: 3px solid var(--rh-green);">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                <div>
+                    <strong style="color: var(--rh-white);">${pick.symbol}</strong>
+                    <span style="color: var(--rh-gray); font-size: 0.875rem; margin-left: 0.5rem;">${pick.type}</span>
+                </div>
+                <span style="color: var(--rh-green); font-weight: 600;">${pick.action}</span>
+            </div>
+            <div style="font-size: 0.875rem; color: var(--rh-gray);">
+                Entry: ${pick.entry} → Exit: ${pick.exit}
+            </div>
+            <div style="font-size: 0.875rem; color: var(--rh-yellow); margin-top: 0.25rem;">
+                ${pick.reason}
+            </div>
+        </div>
+    `).join('');
+}
+
+async function loadDashboardNews() {
+    try {
+        const response = await fetch(`${API_BASE}/api/news/latest`);
+        const data = await response.json();
+        
+        const newsDiv = document.getElementById('dashboard-news');
+        if (!newsDiv) return;
+        
+        newsDiv.innerHTML = data.news.slice(0, 5).map(article => `
+            <div style="padding: 1rem; background: var(--rh-black); border-radius: 8px; margin-bottom: 0.75rem;">
+                <h4 style="color: var(--rh-white); margin-bottom: 0.5rem;">${article.title}</h4>
+                <div style="color: var(--rh-gray); font-size: 0.875rem;">${article.source} - ${new Date(article.publishedAt).toLocaleString()}</div>
+                <span class="sentiment ${article.sentiment}" style="margin-top: 0.5rem; display: inline-block;">${article.sentiment.toUpperCase()}</span>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading dashboard news:', error);
+    }
+}
+
+// Strategy Center Functions
+async function handleStrategySubmit(e) {
+    e.preventDefault();
+    
+    const symbol = document.getElementById('strategy-symbol').value.toUpperCase();
+    const type = document.getElementById('strategy-type').value;
+    const resultDiv = document.getElementById('strategy-result');
+    
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = `
+        <div class="card">
+            <h3>Evon AI Strategy for ${symbol}</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                <div style="padding: 1rem; background: var(--rh-black); border-radius: 8px; border-left: 3px solid var(--rh-green);">
+                    <h4 style="color: var(--rh-green); margin-bottom: 0.75rem;">📈 CALL Strategy</h4>
+                    <p><strong>Strike:</strong> $${(Math.random() * 50 + 100).toFixed(2)}</p>
+                    <p><strong>Expiry:</strong> 30 days</p>
+                    <p><strong>Entry:</strong> $${(Math.random() * 5 + 2).toFixed(2)}</p>
+                    <p><strong>Target:</strong> $${(Math.random() * 8 + 5).toFixed(2)}</p>
+                    <p style="color: var(--rh-gray); margin-top: 0.5rem; font-size: 0.875rem;">
+                        Evon Confidence: ${(Math.random() * 30 + 70).toFixed(0)}%
+                    </p>
+                </div>
+                <div style="padding: 1rem; background: var(--rh-black); border-radius: 8px; border-left: 3px solid var(--rh-red);">
+                    <h4 style="color: var(--rh-red); margin-bottom: 0.75rem;">📉 PUT Strategy</h4>
+                    <p><strong>Strike:</strong> $${(Math.random() * 40 + 80).toFixed(2)}</p>
+                    <p><strong>Expiry:</strong> 30 days</p>
+                    <p><strong>Entry:</strong> $${(Math.random() * 4 + 1).toFixed(2)}</p>
+                    <p><strong>Target:</strong> $${(Math.random() * 7 + 3).toFixed(2)}</p>
+                    <p style="color: var(--rh-gray); margin-top: 0.5rem; font-size: 0.875rem;">
+                        Evon Confidence: ${(Math.random() * 30 + 50).toFixed(0)}%
+                    </p>
+                </div>
+            </div>
+            <p style="color: var(--rh-yellow); margin-top: 1rem; padding: 1rem; background: var(--rh-black); border-radius: 8px;">
+                <strong>Evon's Recommendation:</strong> Based on current market conditions, the CALL strategy shows stronger potential for ${symbol}. Consider entry on dips with stop-loss at -20%.
+            </p>
+        </div>
+    `;
+}
+
+function loadStrategy() {
+    // Strategy section is interactive - user submits form
+}
+
+// Options Functions
+async function loadOptions() {
+    loadOptionsCategory('popular-options', 'popular');
+    loadOptionsCategory('etf-options', 'etf');
+    loadOptionsCategory('penny-options', 'penny');
+    loadOptionsCategory('upcoming-options', 'upcoming');
+}
+
+async function loadOptionsCategory(elementId, category) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    const mockOptions = {
+        popular: [
+            { symbol: 'AAPL', type: 'CALL', strike: 180, expiry: '12/22', premium: 4.50 },
+            { symbol: 'TSLA', type: 'PUT', strike: 240, expiry: '12/22', premium: 6.75 }
+        ],
+        etf: [
+            { symbol: 'SPY', type: 'CALL', strike: 460, expiry: '01/19', premium: 3.20 },
+            { symbol: 'QQQ', type: 'CALL', strike: 390, expiry: '01/19', premium: 5.10 }
+        ],
+        penny: [
+            { symbol: 'SNDL', type: 'CALL', strike: 2.50, expiry: '01/19', premium: 0.15 },
+            { symbol: 'PLUG', type: 'PUT', strike: 8.00, expiry: '12/22', premium: 0.65 }
+        ],
+        upcoming: [
+            { symbol: 'RIVN', type: 'CALL', strike: 20, expiry: '02/16', premium: 1.80 },
+            { symbol: 'LCID', type: 'CALL', strike: 6, expiry: '02/16', premium: 0.45 }
+        ]
+    };
+    
+    const options = mockOptions[category] || [];
+    element.innerHTML = options.map(opt => `
+        <div style="padding: 0.75rem; background: var(--rh-black); border-radius: 8px; margin-bottom: 0.5rem; border-left: 3px solid ${opt.type === 'CALL' ? 'var(--rh-green)' : 'var(--rh-red)'};">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                <strong style="color: var(--rh-white);">${opt.symbol}</strong>
+                <span style="color: ${opt.type === 'CALL' ? 'var(--rh-green)' : 'var(--rh-red)'}; font-weight: 600;">${opt.type}</span>
+            </div>
+            <div style="font-size: 0.875rem; color: var(--rh-gray);">
+                Strike: $${opt.strike} | Expiry: ${opt.expiry}<br>
+                Premium: $${opt.premium}
+            </div>
+        </div>
+    `).join('');
+}
+
+// Penny Stocks Functions
+async function loadPennyStocks() {
+    loadPennyCategory('under1-stocks', 1);
+    loadPennyCategory('under5-stocks', 5);
+}
+
+async function loadPennyCategory(elementId, priceLimit) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    const mockStocks = priceLimit === 1 ? [
+        { symbol: 'SNDL', price: 0.45, change: 8.5, volume: '125M', potential: 'High' },
+        { symbol: 'ATOS', price: 0.82, change: 12.3, volume: '45M', potential: 'Medium' }
+    ] : [
+        { symbol: 'PLUG', price: 4.25, change: 5.2, volume: '28M', potential: 'High' },
+        { symbol: 'TLRY', price: 3.80, change: -2.1, volume: '15M', potential: 'Medium' },
+        { symbol: 'WISH', price: 2.15, change: 15.8, volume: '52M', potential: 'Very High' }
+    ];
+    
+    element.innerHTML = mockStocks.map(stock => `
+        <div style="padding: 1rem; background: var(--rh-black); border-radius: 8px; margin-bottom: 0.75rem; border-left: 3px solid var(--rh-yellow);">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                <div>
+                    <strong style="color: var(--rh-white); font-size: 1.1rem;">${stock.symbol}</strong>
+                    <div style="color: var(--rh-gray); font-size: 0.875rem; margin-top: 0.25rem;">
+                        Volume: ${stock.volume}
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 1.1rem; font-weight: 600; color: var(--rh-white);">$${stock.price.toFixed(2)}</div>
+                    <div style="color: ${stock.change >= 0 ? 'var(--rh-green)' : 'var(--rh-red)'}; font-size: 0.875rem;">
+                        ${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(1)}%
+                    </div>
+                </div>
+            </div>
+            <div style="background: var(--rh-card); padding: 0.5rem; border-radius: 6px; margin-top: 0.5rem;">
+                <span style="color: var(--rh-yellow); font-size: 0.875rem; font-weight: 600;">
+                    Evon Potential: ${stock.potential}
+                </span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ETF Analysis Functions
+async function loadETFAnalysis() {
+    loadETFCategory('etf-calls', 'calls');
+    loadETFCategory('etf-puts', 'puts');
+}
+
+async function loadETFCategory(elementId, type) {
+    const element = document.getElementById(elementId);
+    if (!element) return;
+    
+    const mockETFs = type === 'calls' ? [
+        { symbol: 'QQQ', price: 385, target: 405, confidence: 85, reason: 'Tech sector strength' },
+        { symbol: 'XLK', price: 180, target: 195, confidence: 78, reason: 'AI momentum' }
+    ] : [
+        { symbol: 'XLE', price: 88, target: 80, confidence: 72, reason: 'Oil price pressure' },
+        { symbol: 'XLF', price: 38, target: 35, confidence: 65, reason: 'Rate concerns' }
+    ];
+    
+    element.innerHTML = mockETFs.map(etf => `
+        <div style="padding: 1rem; background: var(--rh-black); border-radius: 8px; margin-bottom: 0.75rem; border-left: 3px solid ${type === 'calls' ? 'var(--rh-green)' : 'var(--rh-red)'};">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+                <strong style="color: var(--rh-white); font-size: 1.1rem;">${etf.symbol}</strong>
+                <span style="color: ${type === 'calls' ? 'var(--rh-green)' : 'var(--rh-red)'}; font-weight: 600;">${type.toUpperCase()}</span>
+            </div>
+            <div style="color: var(--rh-gray); font-size: 0.875rem; margin-bottom: 0.5rem;">
+                Current: $${etf.price} → Target: $${etf.target}<br>
+                Evon Confidence: ${etf.confidence}%
+            </div>
+            <div style="color: var(--rh-yellow); font-size: 0.875rem;">
+                ${etf.reason}
+            </div>
+        </div>
+    `).join('');
+}
+
+// Growth Stocks Functions
+async function loadGrowthStocks() {
+    const element = document.getElementById('growth-stocks');
+    if (!element) return;
+    
+    const mockGrowth = [
+        { symbol: 'NVDA', price: 495, growth: '+125%', sector: 'Technology', score: 95 },
+        { symbol: 'META', price: 355, growth: '+88%', sector: 'Technology', score: 90 },
+        { symbol: 'SHOP', price: 78, growth: '+65%', sector: 'E-commerce', score: 85 },
+        { symbol: 'SQ', price: 85, growth: '+52%', sector: 'Fintech', score: 82 }
+    ];
+    
+    element.innerHTML = mockGrowth.map(stock => `
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                <div>
+                    <h4 style="color: var(--rh-white); margin-bottom: 0.25rem;">${stock.symbol}</h4>
+                    <div style="color: var(--rh-gray); font-size: 0.875rem;">${stock.sector}</div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 1.25rem; font-weight: 600; color: var(--rh-white);">$${stock.price}</div>
+                    <div style="color: var(--rh-green); font-size: 0.875rem; font-weight: 600;">${stock.growth}</div>
+                </div>
+            </div>
+            <div style="background: var(--rh-black); padding: 0.75rem; border-radius: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--rh-gray); font-size: 0.875rem;">Evon Growth Score</span>
+                    <span style="color: var(--rh-yellow); font-weight: 600;">${stock.score}/100</span>
+                </div>
+                <div style="background: var(--rh-card); height: 6px; border-radius: 3px; margin-top: 0.5rem; overflow: hidden;">
+                    <div style="background: var(--rh-green); height: 100%; width: ${stock.score}%;"></div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Dividend Stocks Functions
+async function loadDividendStocks() {
+    const element = document.getElementById('dividend-stocks');
+    if (!element) return;
+    
+    const mockDividend = [
+        { symbol: 'JNJ', price: 158, yield: 3.2, payout: '$4.76', frequency: 'Quarterly', score: 92 },
+        { symbol: 'PG', price: 145, yield: 2.8, payout: '$3.65', frequency: 'Quarterly', score: 90 },
+        { symbol: 'KO', price: 59, yield: 3.1, payout: '$1.84', frequency: 'Quarterly', score: 88 },
+        { symbol: 'VZ', price: 38, yield: 6.8, payout: '$2.61', frequency: 'Quarterly', score: 85 }
+    ];
+    
+    element.innerHTML = mockDividend.map(stock => `
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                <div>
+                    <h4 style="color: var(--rh-white); margin-bottom: 0.25rem;">${stock.symbol}</h4>
+                    <div style="color: var(--rh-gray); font-size: 0.875rem;">${stock.frequency}</div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 1.25rem; font-weight: 600; color: var(--rh-white);">$${stock.price}</div>
+                    <div style="color: var(--rh-green); font-size: 0.875rem; font-weight: 600;">${stock.yield}% Yield</div>
+                </div>
+            </div>
+            <div style="background: var(--rh-black); padding: 0.75rem; border-radius: 8px; margin-bottom: 0.75rem;">
+                <div style="color: var(--rh-gray); font-size: 0.875rem; margin-bottom: 0.25rem;">Annual Payout</div>
+                <div style="color: var(--rh-white); font-size: 1.1rem; font-weight: 600;">${stock.payout}</div>
+            </div>
+            <div style="background: var(--rh-black); padding: 0.75rem; border-radius: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--rh-gray); font-size: 0.875rem;">Evon Dividend Score</span>
+                    <span style="color: var(--rh-yellow); font-weight: 600;">${stock.score}/100</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Unusual Activity Functions
+async function loadUnusualActivity() {
+    const element = document.getElementById('unusual-list');
+    if (!element) return;
+    
+    const mockActivity = [
+        { symbol: 'AAPL', type: 'CALL', volume: 45230, oi: 12500, unusual: 'Very High', time: '2 min ago' },
+        { symbol: 'TSLA', type: 'PUT', volume: 38920, oi: 15200, unusual: 'High', time: '5 min ago' },
+        { symbol: 'NVDA', type: 'CALL', volume: 52100, oi: 18900, unusual: 'Extreme', time: '8 min ago' },
+        { symbol: 'SPY', type: 'PUT', volume: 125000, oi: 450000, unusual: 'High', time: '12 min ago' }
+    ];
+    
+    element.innerHTML = mockActivity.map(activity => `
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem;">
+                <div>
+                    <h4 style="color: var(--rh-white); margin-bottom: 0.25rem;">${activity.symbol}</h4>
+                    <span style="color: ${activity.type === 'CALL' ? 'var(--rh-green)' : 'var(--rh-red)'}; font-weight: 600;">${activity.type}</span>
+                </div>
+                <div style="text-align: right;">
+                    <div style="color: var(--rh-yellow); font-size: 0.875rem; font-weight: 600;">${activity.unusual}</div>
+                    <div style="color: var(--rh-gray); font-size: 0.75rem;">${activity.time}</div>
+                </div>
+            </div>
+            <div style="background: var(--rh-black); padding: 0.75rem; border-radius: 8px;">
+                <div style="color: var(--rh-gray); font-size: 0.875rem;">
+                    Volume: ${activity.volume.toLocaleString()} | OI: ${activity.oi.toLocaleString()}
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Sectors Functions
+async function loadSectors() {
+    const sectors = ['tech', 'health', 'finance', 'energy', 'consumer', 'industrial'];
+    sectors.forEach(sector => loadSectorStocks(sector));
+}
+
+async function loadSectorStocks(sector) {
+    const element = document.getElementById(`sector-${sector}`);
+    if (!element) return;
+    
+    const sectorStocks = {
+        tech: [
+            { symbol: 'AAPL', price: 178, pe: 28, score: 95 },
+            { symbol: 'MSFT', price: 372, pe: 35, score: 93 }
+        ],
+        health: [
+            { symbol: 'JNJ', price: 158, pe: 24, score: 90 },
+            { symbol: 'UNH', price: 525, pe: 22, score: 88 }
+        ],
+        finance: [
+            { symbol: 'JPM', price: 155, pe: 10, score: 87 },
+            { symbol: 'BAC', price: 32, pe: 9, score: 85 }
+        ],
+        energy: [
+            { symbol: 'XOM', price: 105, pe: 8, score: 82 },
+            { symbol: 'CVX', price: 148, pe: 10, score: 80 }
+        ],
+        consumer: [
+            { symbol: 'WMT', price: 165, pe: 28, score: 88 },
+            { symbol: 'COST', price: 645, pe: 42, score: 86 }
+        ],
+        industrial: [
+            { symbol: 'CAT', price: 285, pe: 16, score: 84 },
+            { symbol: 'BA', price: 205, pe: -15, score: 75 }
+        ]
+    };
+    
+    const stocks = sectorStocks[sector] || [];
+    element.innerHTML = stocks.map(stock => `
+        <div style="padding: 0.75rem; background: var(--rh-black); border-radius: 8px; margin-bottom: 0.5rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                <strong style="color: var(--rh-white);">${stock.symbol}</strong>
+                <span style="color: var(--rh-white);">$${stock.price}</span>
+            </div>
+            <div style="font-size: 0.875rem; color: var(--rh-gray);">
+                P/E: ${stock.pe} | Score: ${stock.score}/100
+            </div>
+        </div>
+    `).join('');
 }
 
 // Market Functions
