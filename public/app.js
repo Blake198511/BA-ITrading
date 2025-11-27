@@ -42,18 +42,13 @@ async function checkAuthentication() {
 }
 
 function setupLoginForm() {
+    const loginForm = document.getElementById('login-form');
     const passwordInput = document.getElementById('password-input');
     const loginButton = document.getElementById('login-button');
-    const loginError = document.getElementById('login-error');
 
-    // Handle Enter key
-    passwordInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            loginButton.click();
-        }
-    });
-
-    loginButton.addEventListener('click', async () => {
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
         const password = passwordInput.value;
         
         if (!password) {
@@ -588,6 +583,12 @@ async function loadDashboardNews() {
         const newsDiv = document.getElementById('dashboard-news');
         if (!newsDiv) return;
         
+        // Handle error responses or missing news array
+        if (!response.ok || !data.news || !Array.isArray(data.news)) {
+            newsDiv.innerHTML = '<p style="color: var(--rh-gray);">News API not configured. Set NEWS_API_KEY in .env for live news.</p>';
+            return;
+        }
+        
         newsDiv.innerHTML = data.news.slice(0, 5).map(article => `
             <div style="padding: 1rem; background: var(--rh-black); border-radius: 8px; margin-bottom: 0.75rem;">
                 <h4 style="color: var(--rh-white); margin-bottom: 0.5rem;">${article.title}</h4>
@@ -596,7 +597,10 @@ async function loadDashboardNews() {
             </div>
         `).join('');
     } catch (error) {
-        console.error('Error loading dashboard news:', error);
+        const newsDiv = document.getElementById('dashboard-news');
+        if (newsDiv) {
+            newsDiv.innerHTML = '<p style="color: var(--rh-gray);">Unable to load news. Please try again later.</p>';
+        }
     }
 }
 
@@ -1220,10 +1224,17 @@ async function loadOptionsFlow() {
 // News Functions
 async function loadNews() {
     const newsFeed = document.getElementById('news-feed');
+    if (!newsFeed) return;
     
     try {
         const response = await fetch(`${API_BASE}/api/news/latest`);
         const data = await response.json();
+        
+        // Handle error responses or missing news array
+        if (!response.ok || !data.news || !Array.isArray(data.news)) {
+            newsFeed.innerHTML = '<p style="color: var(--rh-gray);">News API not configured. Set NEWS_API_KEY in .env for live news.</p>';
+            return;
+        }
         
         newsFeed.innerHTML = data.news.map(article => `
             <div class="news-item">
@@ -1236,19 +1247,28 @@ async function loadNews() {
             </div>
         `).join('');
     } catch (error) {
-        newsFeed.innerHTML = `<p style="color: var(--rh-red);">Error loading news: ${error.message}</p>`;
+        newsFeed.innerHTML = '<p style="color: var(--rh-gray);">Unable to load news. Please try again later.</p>';
     }
 }
 
 // Reddit Sentiment Functions
 async function loadRedditSentiment() {
-    const subreddit = document.getElementById('subreddit-select').value;
+    const subreddit = document.getElementById('subreddit-select')?.value;
     const trendingDiv = document.getElementById('trending-tickers');
     const hypeDiv = document.getElementById('hype-levels');
     
+    if (!trendingDiv || !hypeDiv) return;
+    
     try {
-        const response = await fetch(`${API_BASE}/api/reddit/sentiment/${subreddit}`);
+        const response = await fetch(`${API_BASE}/api/reddit/sentiment/${subreddit || 'wallstreetbets'}`);
         const data = await response.json();
+        
+        // Handle error responses or missing data
+        if (!response.ok || !data.topMentions || !data.sentiment) {
+            trendingDiv.innerHTML = '<p style="color: var(--rh-gray);">Reddit API not configured. Set REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET in .env.</p>';
+            hypeDiv.innerHTML = '';
+            return;
+        }
         
         trendingDiv.innerHTML = data.topMentions.map(mention => `
             <div style="padding: 0.75rem; background: var(--rh-black); border-radius: 8px; margin-bottom: 0.5rem;">
@@ -1264,7 +1284,7 @@ async function loadRedditSentiment() {
             </div>
         `;
     } catch (error) {
-        trendingDiv.innerHTML = `<p style="color: var(--rh-red);">Error: ${error.message}</p>`;
+        trendingDiv.innerHTML = '<p style="color: var(--rh-gray);">Unable to load Reddit sentiment. Please try again later.</p>';
     }
 }
 
@@ -1294,6 +1314,7 @@ async function loadEarnings() {
 // Watchlist Functions
 async function loadWatchlist() {
     const watchlistDiv = document.getElementById('watchlist-items');
+    if (!watchlistDiv) return;
     
     try {
         const response = await fetch(`${API_BASE}/api/db/read?key=watchlist`);
@@ -1313,7 +1334,7 @@ async function loadWatchlist() {
             </div>
         `).join('');
     } catch (error) {
-        watchlistDiv.innerHTML = `<p style="color: var(--rh-red);">Error: ${error.message}</p>`;
+        watchlistDiv.innerHTML = '<p style="color: var(--rh-gray);">Unable to load watchlist. Please try again later.</p>';
     }
 }
 
